@@ -3,18 +3,28 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Catering Inquiry & Payment — Angeli's Restaurant</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <title>Catering Order — Angeli's Restaurant</title>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&family=Herr+Von+Muellerhoff&display=swap" rel="stylesheet" />
-  <!-- Authorize.net Accept.js -->
-  <script type="text/javascript" src="https://js.authorize.net/v1/Accept.js" charset="utf-8"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    :root {
+      --gold:    #e08e30;
+      --gold-lt: #fdf8f0;
+      --burgundy:#7b1d2e;
+      --charcoal:#3C3950;
+      --dark:    #2a2535;
+      --gray:    #777;
+      --border:  #ddd;
+      --bg:      #F7F3EE;
+      --white:   #fff;
+      --error:   #c62828;
+    }
+
     body {
       font-family: 'Open Sans', sans-serif;
-      background: #ffffff;
-      color: #3C3950;
+      background: var(--bg);
+      color: var(--charcoal);
       font-size: 15px;
       line-height: 1.6;
     }
@@ -23,416 +33,1536 @@
     .form-header {
       text-align: center;
       padding: 48px 24px 32px;
+      background: var(--white);
       border-bottom: 1px solid #ececec;
     }
-    .form-header .script-title {
+    .script-title {
       font-family: 'Herr Von Muellerhoff', cursive;
-      font-size: 64px;
-      color: #e08e30;
+      font-size: 68px;
+      color: var(--gold);
       line-height: 1;
       margin-bottom: 8px;
     }
     .form-header h1 {
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 700;
-      letter-spacing: 2px;
+      letter-spacing: 3px;
       text-transform: uppercase;
-      color: #3C3950;
+      color: var(--charcoal);
       margin-bottom: 10px;
     }
     .form-header p {
       font-size: 14px;
-      color: #777;
+      color: var(--gray);
       max-width: 520px;
       margin: 0 auto;
     }
 
-    /* ── Container ──────────────────────────────────────────── */
-    .form-container {
-      max-width: 680px;
-      margin: 48px auto;
-      padding: 0 24px 80px;
-    }
+    /* ── Layout ─────────────────────────────────────────────── */
+    .wrap { max-width: 760px; margin: 0 auto; padding: 32px 20px 80px; }
 
-    /* ── Section headers ────────────────────────────────────── */
-    .section-title {
-      font-size: 11px;
+    /* ── Section cards ──────────────────────────────────────── */
+    .section {
+      background: var(--white);
+      border-radius: 12px;
+      padding: 28px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    }
+    .section-hd {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .section-badge {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--burgundy);
+      color: #fff;
+      font-size: 13px;
       font-weight: 700;
-      letter-spacing: 2.5px;
-      text-transform: uppercase;
-      color: #e08e30;
-      margin: 40px 0 20px;
-      padding-bottom: 10px;
-      border-bottom: 2px solid #f0f0f0;
+      display: flex; align-items: center; justify-content: center;
+      margin-right: 10px;
+      flex-shrink: 0;
+    }
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--charcoal);
+    }
+    .section-sub {
+      font-size: 12px;
+      color: var(--gray);
+      font-style: italic;
+      margin: -12px 0 16px;
+    }
+    .gold-divider {
+      width: 36px; height: 2px;
+      background: var(--gold);
+      border-radius: 1px;
+      margin: 8px 0 16px;
     }
 
     /* ── Form fields ────────────────────────────────────────── */
-    .form-row {
-      display: flex;
-      gap: 16px;
-      margin-bottom: 16px;
-    }
-    .form-row.single { display: block; margin-bottom: 16px; }
-    .form-group {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    label {
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 1px;
+    .field { margin-bottom: 18px; }
+    .field-row { display: flex; gap: 16px; margin-bottom: 18px; }
+    .field-row .field { flex: 1; margin-bottom: 0; }
+    label.lbl {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
       text-transform: uppercase;
-      color: #3C3950;
+      color: var(--charcoal);
+      margin-bottom: 6px;
     }
-    input[type="text"],
-    input[type="email"],
-    input[type="tel"],
-    input[type="date"],
-    input[type="number"],
-    select,
-    textarea {
+    .req { color: var(--burgundy); }
+    input[type=text], input[type=email], input[type=tel],
+    input[type=number], select, textarea {
       width: 100%;
-      padding: 12px 14px;
-      border: 1px solid #d9d9d9;
-      border-radius: 4px;
+      padding: 11px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
       font-family: 'Open Sans', sans-serif;
       font-size: 14px;
-      color: #3C3950;
-      background: #fff;
-      transition: border-color 0.2s;
+      color: var(--charcoal);
+      background: #f9f6f2;
       outline: none;
+      transition: border-color .2s, box-shadow .2s;
       -webkit-appearance: none;
     }
     input:focus, select:focus, textarea:focus {
-      border-color: #e08e30;
+      border-color: var(--gold);
       box-shadow: 0 0 0 3px rgba(224,142,48,0.12);
     }
-    textarea { resize: vertical; min-height: 100px; }
-    select { cursor: pointer; }
+    input.err, select.err, textarea.err { border-color: var(--error); }
+    textarea { resize: vertical; min-height: 90px; }
+    .field-err { font-size: 12px; color: var(--error); margin-top: 4px; display: none; }
+    .field-err.show { display: block; }
 
-    /* ── Payment card fields ────────────────────────────────── */
-    .card-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
+    /* ── Order Mode Toggle ──────────────────────────────────── */
+    .mode-wrap { margin-bottom: 20px; }
+    .mode-label {
+      font-size: 11px; font-weight: 700; letter-spacing: 1.2px;
+      text-transform: uppercase; color: var(--charcoal); margin-bottom: 8px;
     }
-    .card-grid .card-number { grid-column: 1 / -1; }
+    .mode-toggle {
+      display: flex;
+      border: 2px solid var(--burgundy);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .mode-btn {
+      flex: 1; padding: 12px;
+      text-align: center;
+      font-weight: 700; font-size: 14px;
+      cursor: pointer;
+      background: var(--white);
+      color: var(--burgundy);
+      border: none;
+      transition: background .2s, color .2s;
+    }
+    .mode-btn.active { background: var(--burgundy); color: #fff; }
 
-    /* ── Submit button ──────────────────────────────────────── */
+    /* ── Toggle (Pickup / Delivery) ─────────────────────────── */
+    .toggle-row { display: flex; border: 1.5px solid var(--border); border-radius: 8px; overflow: hidden; }
+    .toggle-btn {
+      flex: 1; padding: 11px; text-align: center;
+      background: #f9f6f2; cursor: pointer;
+      font-size: 14px; font-weight: 600; color: var(--gray);
+      border: none; transition: background .2s, color .2s;
+    }
+    .toggle-btn.active { background: var(--burgundy); color: #fff; }
+
+    /* ── Package Cards ──────────────────────────────────────── */
+    .pkg-card {
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: border-color .2s, background .2s;
+      background: var(--white);
+    }
+    .pkg-card:hover { border-color: var(--gold); }
+    .pkg-card.selected { border-color: var(--burgundy); background: #fff8f9; }
+    .pkg-card-top { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+    .pkg-name { font-weight: 700; font-size: 15px; flex: 1; }
+    .pkg-card.selected .pkg-name { color: var(--burgundy); }
+    .pkg-price-block { text-align: right; margin-right: 8px; }
+    .pkg-price { font-size: 20px; font-weight: 700; color: var(--charcoal); }
+    .pkg-card.selected .pkg-price { color: var(--burgundy); }
+    .pkg-pp { font-size: 11px; color: var(--gray); }
+    .pkg-radio {
+      width: 20px; height: 20px; border-radius: 50%;
+      border: 2px solid #bbb; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .pkg-card.selected .pkg-radio { border-color: var(--burgundy); }
+    .pkg-radio-inner {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--burgundy); display: none;
+    }
+    .pkg-card.selected .pkg-radio-inner { display: block; }
+    .pkg-desc { font-size: 13px; color: var(--gray); line-height: 1.5; }
+    .pkg-card.selected .pkg-desc { color: var(--charcoal); }
+    .pkg-min { font-size: 11px; color: var(--gold); font-style: italic; margin-top: 2px; }
+
+    /* ── Chip selectors ──────────────────────────────────────── */
+    .chip-row { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 4px; }
+    .chip {
+      border: 1.5px solid var(--border);
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: 13px;
+      cursor: pointer;
+      background: var(--white);
+      color: var(--charcoal);
+      transition: background .15s, border-color .15s, color .15s;
+      user-select: none;
+    }
+    .chip:hover { border-color: var(--gold); }
+    .chip.selected { background: var(--burgundy); border-color: var(--burgundy); color: #fff; }
+    .chip.disabled { opacity: 0.35; cursor: default; pointer-events: none; }
+
+    /* ── Stepper ─────────────────────────────────────────────── */
+    .stepper {
+      display: inline-flex;
+      align-items: center;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .step-btn {
+      width: 34px; height: 34px;
+      display: flex; align-items: center; justify-content: center;
+      background: #f2eee9; cursor: pointer;
+      font-size: 18px; font-weight: 700;
+      color: var(--burgundy);
+      border: none; user-select: none;
+    }
+    .step-btn:hover { background: #e8e2db; }
+    .step-val {
+      width: 36px; text-align: center;
+      font-size: 15px; font-weight: 700; color: var(--charcoal);
+    }
+
+    /* ── Add-on rows ─────────────────────────────────────────── */
+    .addon-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+    }
+    .addon-row.selected { background: #fff8f9; margin: 0 -28px; padding: 12px 28px; }
+    .checkbox {
+      width: 22px; height: 22px; border-radius: 4px;
+      border: 2px solid #bbb; display: flex; align-items: center;
+      justify-content: center; flex-shrink: 0; background: var(--white);
+      transition: background .15s, border-color .15s;
+    }
+    .addon-row.selected .checkbox { background: var(--burgundy); border-color: var(--burgundy); }
+    .check-mark { color: #fff; font-size: 13px; font-weight: 700; display: none; }
+    .addon-row.selected .check-mark { display: block; }
+    .addon-label { flex: 1; font-size: 14px; color: var(--charcoal); }
+    .addon-row.selected .addon-label { font-weight: 700; color: var(--burgundy); }
+    .addon-price { font-size: 13px; font-weight: 700; color: var(--gray); }
+    .addon-row.selected .addon-price { color: var(--burgundy); }
+
+    /* ── Summary Card ────────────────────────────────────────── */
+    .summary-card {
+      background: var(--dark);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 20px;
+      color: #fff;
+    }
+    .summary-title { font-size: 18px; font-weight: 700; color: var(--gold); margin-bottom: 4px; }
+    .summary-row { display: flex; justify-content: space-between; margin-bottom: 7px; font-size: 13px; }
+    .summary-row .sl { color: rgba(255,255,255,.65); flex: 1; padding-right: 12px; }
+    .summary-row .sv { font-weight: 700; color: #fff; text-align: right; }
+    .summary-divider { height: 1px; background: rgba(255,255,255,.15); margin: 12px 0; }
+    .summary-total-row { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; }
+    .summary-total-label { font-size: 15px; font-weight: 700; color: var(--gold); }
+    .summary-total-amt { font-size: 28px; font-weight: 700; color: var(--gold); }
+    .summary-note { font-size: 11px; color: rgba(255,255,255,.4); font-style: italic; margin-top: 12px; line-height: 1.5; }
+
+    /* ── Payment Card ────────────────────────────────────────── */
+    .payment-card {
+      background: var(--dark);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 20px;
+      color: #fff;
+    }
+    .payment-hd { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+    .payment-title { font-size: 18px; font-weight: 700; color: var(--gold); }
+    .payment-note { font-size: 12px; color: rgba(255,255,255,.55); font-style: italic; margin-bottom: 20px; }
+    .payment-card .lbl { color: rgba(255,255,255,.8); }
+    .payment-card input {
+      background: rgba(255,255,255,.08);
+      border-color: rgba(255,255,255,.2);
+      color: #fff;
+    }
+    .payment-card input::placeholder { color: rgba(255,255,255,.35); }
+    .payment-card input:focus { border-color: var(--gold); background: rgba(255,255,255,.12); }
+    .payment-card .field-err { color: #ff8a80; }
+    .secure-note { font-size: 11px; color: rgba(255,255,255,.4); margin-top: 8px; }
+
+    /* ── Submit Button ───────────────────────────────────────── */
     .submit-btn {
       width: 100%;
       padding: 16px;
-      background: #e08e30;
+      background: var(--burgundy);
       color: #fff;
       border: none;
-      border-radius: 4px;
-      font-family: 'Open Sans', sans-serif;
-      font-size: 13px;
+      border-radius: 999px;
+      font-size: 15px;
       font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
+      letter-spacing: .5px;
       cursor: pointer;
-      margin-top: 32px;
-      transition: background 0.2s, transform 0.1s;
+      margin-bottom: 16px;
+      transition: background .2s, transform .1s;
+      box-shadow: 0 4px 16px rgba(123,29,46,.3);
     }
-    .submit-btn:hover { background: #c97d28; }
-    .submit-btn:active { transform: scale(0.99); }
-    .submit-btn:disabled {
-      background: #ccc;
-      cursor: not-allowed;
-      transform: none;
-    }
+    .submit-btn:hover { background: #6a1828; }
+    .submit-btn:active { transform: scale(.99); }
+    .submit-btn:disabled { background: #999; cursor: not-allowed; transform: none; box-shadow: none; }
 
-    /* ── Messages ───────────────────────────────────────────── */
+    /* ── Messages ────────────────────────────────────────────── */
     .msg {
-      display: none;
-      padding: 16px 20px;
-      border-radius: 6px;
-      font-size: 14px;
-      margin-top: 20px;
-      line-height: 1.5;
+      padding: 16px 20px; border-radius: 8px;
+      font-size: 14px; line-height: 1.6;
+      margin: 16px 0; display: none;
     }
-    .msg.success {
-      background: #f0f9f4;
-      border: 1px solid #4caf50;
-      color: #2e7d32;
-      display: block;
-    }
-    .msg.error {
-      background: #fff0f0;
-      border: 1px solid #ef5350;
-      color: #c62828;
-      display: block;
-    }
+    .msg.success { display: block; background: #f0f9f4; border: 1px solid #4caf50; color: #2e7d32; }
+    .msg.error   { display: block; background: #fff0f0; border: 1px solid #ef5350; color: var(--error); }
 
-    /* ── Security badge ─────────────────────────────────────── */
-    .security-note {
-      text-align: center;
-      margin-top: 24px;
-      font-size: 12px;
-      color: #aaa;
-    }
-    .security-note span { color: #4caf50; font-weight: 700; }
-
-    /* ── Spinner ────────────────────────────────────────────── */
+    /* ── Spinner ─────────────────────────────────────────────── */
     .spinner {
-      display: inline-block;
-      width: 16px; height: 16px;
-      border: 2px solid rgba(255,255,255,0.4);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-      vertical-align: middle;
-      margin-right: 8px;
+      display: inline-block; width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,.35);
+      border-top-color: #fff; border-radius: 50%;
+      animation: spin .7s linear infinite;
+      vertical-align: middle; margin-right: 8px;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ── Responsive ─────────────────────────────────────────── */
+    /* ── ALC section headers ─────────────────────────────────── */
+    .alc-cat {
+      display: flex; align-items: flex-start; gap: 8px;
+      margin: 20px 0 12px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--gold);
+    }
+    .alc-cat-icon { font-size: 16px; margin-top: 2px; }
+    .alc-cat-name { font-size: 17px; font-weight: 700; color: var(--burgundy); }
+    .alc-cat-sub { font-size: 11px; color: var(--gray); font-style: italic; }
+    .alc-serving {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      background: #f9f6f2; border-radius: 6px;
+      padding: 8px 12px; margin-bottom: 12px;
+      font-size: 11px; color: var(--gray);
+    }
+
+    /* ── ALC item rows ───────────────────────────────────────── */
+    .alc-item {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .alc-name { font-size: 14px; font-weight: 700; color: var(--charcoal); }
+    .alc-sub { font-size: 11px; color: var(--gray); font-style: italic; margin-top: 2px; line-height: 1.4; }
+    .alc-sizes { display: flex; gap: 6px; margin: 8px 0 6px; flex-wrap: wrap; }
+    .size-btn {
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      padding: 5px 12px;
+      cursor: pointer;
+      flex: 1; min-width: 80px;
+      text-align: center;
+      background: var(--white);
+      transition: border-color .15s, background .15s;
+    }
+    .size-btn:hover { border-color: var(--gold); }
+    .size-btn.active { border-color: var(--burgundy); background: #fff8f9; }
+    .size-lbl { font-size: 11px; color: var(--gray); }
+    .size-btn.active .size-lbl { color: var(--burgundy); font-weight: 700; }
+    .size-price { font-size: 14px; font-weight: 700; color: var(--charcoal); }
+    .size-btn.active .size-price { color: var(--burgundy); }
+    .alc-qty-row { display: flex; align-items: center; gap: 10px; margin-top: 6px; }
+    .alc-item-total { font-size: 14px; font-weight: 700; color: var(--gold); }
+    .alc-dozen-lbl { font-size: 13px; font-weight: 700; color: var(--burgundy); }
+    .alc-divider { height: 1px; background: var(--border); margin: 16px 0; }
+
+    /* ── Chicken block ───────────────────────────────────────── */
+    .chicken-block {
+      background: #f9f6f2; border-radius: 8px; padding: 14px; margin-bottom: 10px;
+    }
+    .chicken-pkg-lbl { font-size: 13px; font-weight: 700; color: var(--burgundy); margin-bottom: 8px; }
+    .chicken-qty-row { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+    .chicken-qty-lbl { font-size: 12px; color: var(--gray); flex: 1; }
+
+    /* ── Bread row ───────────────────────────────────────────── */
+    .parm-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; cursor: pointer; }
+    .parm-lbl { font-size: 14px; color: var(--charcoal); }
+    .parm-price { font-size: 12px; color: var(--gray); font-weight: 700; }
+
+    /* ── Appetizer/Sandwich rows ─────────────────────────────── */
+    .app-row { padding: 10px 0; border-bottom: 1px solid var(--border); }
+    .app-name { font-size: 14px; font-weight: 700; }
+    .app-sub { font-size: 11px; color: var(--gray); font-style: italic; margin-top: 2px; }
+    .app-price { font-size: 11px; font-weight: 700; color: var(--gray); margin-top: 2px; }
+    .app-qty-row { display: flex; align-items: center; gap: 10px; margin-top: 6px; }
+
+    /* ── Error banner ────────────────────────────────────────── */
+    .section-err {
+      background: #fff0f0; border: 1px solid #ef9a9a; border-radius: 6px;
+      padding: 10px 14px; font-size: 13px; color: var(--error);
+      margin-bottom: 14px; display: none;
+    }
+    .section-err.show { display: block; }
+
+    /* ── Responsive ──────────────────────────────────────────── */
     @media (max-width: 520px) {
-      .form-header .script-title { font-size: 48px; }
-      .form-row { flex-direction: column; gap: 0; }
-      .card-grid { grid-template-columns: 1fr; }
-      .card-grid .card-number { grid-column: 1; }
+      .script-title { font-size: 52px; }
+      .field-row { flex-direction: column; }
+      .alc-sizes { flex-direction: column; }
+      .size-btn { flex: none; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Header -->
-  <div class="form-header">
-    <div class="script-title">Angeli's</div>
-    <h1>Catering & Private Events</h1>
-    <p>Submit your catering request and complete payment. We'll confirm your booking within 24 hours.</p>
+<div class="form-header">
+  <div class="script-title">Angeli's</div>
+  <h1>Catering Order</h1>
+  <p>Submit your catering order and complete payment. Our team will confirm your booking within 24 hours.</p>
+</div>
+
+<div class="wrap">
+
+  <!-- ══ SECTION 1 — EVENT INFO ══════════════════════════════════ -->
+  <div class="section" id="sec-event">
+    <div class="section-hd">
+      <div class="section-badge">1</div>
+      <div class="section-title">Event Info</div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label class="lbl" for="contactName">Contact Name <span class="req">*</span></label>
+        <input type="text" id="contactName" placeholder="Your full name" />
+        <div class="field-err" id="err-name">Name is required</div>
+      </div>
+      <div class="field">
+        <label class="lbl" for="phone">Phone Number <span class="req">*</span></label>
+        <input type="tel" id="phone" placeholder="(630) 555-0000" />
+        <div class="field-err" id="err-phone">Phone is required</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="lbl" for="email">Email Address <span class="req">*</span></label>
+      <input type="email" id="email" placeholder="you@example.com" />
+      <div class="field-err" id="err-email">Valid email is required</div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label class="lbl" for="eventDate">Event Date <span class="req">*</span></label>
+        <input type="text" id="eventDate" placeholder="MM/DD/YYYY" onfocus="(this.type='date')" onblur="if(!this.value)this.type='text'" />
+        <div class="field-err" id="err-date">Event date is required</div>
+      </div>
+      <div class="field">
+        <label class="lbl" for="eventTime">Pickup / Delivery Time</label>
+        <input type="time" id="eventTime" value="12:00" />
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label class="lbl" for="guestCount">Number of Guests</label>
+        <input type="number" id="guestCount" placeholder="e.g. 50" min="1" />
+      </div>
+      <div class="field">
+        <label class="lbl" for="eventType">Event Type</label>
+        <select id="eventType">
+          <option value="">Select…</option>
+          <option>Corporate Event</option>
+          <option>Wedding</option>
+          <option>Birthday</option>
+          <option>Holiday Party</option>
+          <option>Graduation</option>
+          <option>Other</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="lbl">Service Type <span class="req">*</span></label>
+      <div class="toggle-row">
+        <button class="toggle-btn active" onclick="setDelivery('pickup')">Pickup</button>
+        <button class="toggle-btn" onclick="setDelivery('delivery')">Delivery (+$45.00)</button>
+      </div>
+    </div>
+
+    <div class="field" id="deliveryAddrWrap" style="display:none">
+      <label class="lbl" for="deliveryAddress">Delivery Address <span class="req">*</span></label>
+      <input type="text" id="deliveryAddress" placeholder="123 Main St, Naperville, IL 60540" />
+      <div class="field-err" id="err-addr">Delivery address is required</div>
+    </div>
   </div>
 
-  <div class="form-container">
-    <form id="cateringForm" novalidate>
-
-      <!-- ── Event Details ───────────────────────────────────── -->
-      <div class="section-title">Event Details</div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label for="eventDate">Event Date *</label>
-          <input type="date" id="eventDate" name="eventDate" required />
-        </div>
-        <div class="form-group">
-          <label for="guestCount">Guest Count *</label>
-          <input type="number" id="guestCount" name="guestCount" min="1" placeholder="e.g. 50" required />
-        </div>
-      </div>
-
-      <div class="form-row single">
-        <div class="form-group">
-          <label for="eventType">Event Type *</label>
-          <select id="eventType" name="eventType" required>
-            <option value="" disabled selected>Select event type…</option>
-            <option>Wedding Reception</option>
-            <option>Corporate Event</option>
-            <option>Birthday Party</option>
-            <option>Rehearsal Dinner</option>
-            <option>Baby / Bridal Shower</option>
-            <option>Holiday Party</option>
-            <option>Graduation Party</option>
-            <option>Anniversary</option>
-            <option>Other</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="form-row single">
-        <div class="form-group">
-          <label for="notes">Additional Notes</label>
-          <textarea id="notes" name="notes" placeholder="Menu preferences, dietary restrictions, special requests…"></textarea>
-        </div>
-      </div>
-
-      <!-- ── Contact Info ───────────────────────────────────── -->
-      <div class="section-title">Contact Information</div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label for="firstName">First Name *</label>
-          <input type="text" id="firstName" name="firstName" placeholder="First name" required />
-        </div>
-        <div class="form-group">
-          <label for="lastName">Last Name *</label>
-          <input type="text" id="lastName" name="lastName" placeholder="Last name" required />
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label for="email">Email *</label>
-          <input type="email" id="email" name="email" placeholder="you@example.com" required />
-        </div>
-        <div class="form-group">
-          <label for="phone">Phone Number *</label>
-          <input type="tel" id="phone" name="phone" placeholder="(630) 555-0000" required />
-        </div>
-      </div>
-
-      <!-- ── Payment ────────────────────────────────────────── -->
-      <div class="section-title">Payment</div>
-
-      <div class="form-row single">
-        <div class="form-group">
-          <label for="amount">Amount *</label>
-          <input type="number" id="amount" name="amount" min="1" step="0.01" placeholder="Enter amount (e.g. 500.00)" required />
-        </div>
-      </div>
-
-      <div class="card-grid">
-        <div class="form-group card-number">
-          <label for="cardNumber">Card Number *</label>
-          <input type="text" id="cardNumber" name="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" inputmode="numeric" autocomplete="cc-number" required />
-        </div>
-        <div class="form-group">
-          <label for="cardExpiry">Exp Date *</label>
-          <input type="text" id="cardExpiry" name="cardExpiry" placeholder="MM/YY" maxlength="5" inputmode="numeric" autocomplete="cc-exp" required />
-        </div>
-        <div class="form-group">
-          <label for="cardCVV">CVV *</label>
-          <input type="text" id="cardCVV" name="cardCVV" placeholder="123" maxlength="4" inputmode="numeric" autocomplete="cc-csc" required />
-        </div>
-        <div class="form-group" style="grid-column: 1 / -1">
-          <label for="cardName">Name on Card *</label>
-          <input type="text" id="cardName" name="cardName" placeholder="As it appears on your card" autocomplete="cc-name" required />
-        </div>
-      </div>
-
-      <button type="submit" class="submit-btn" id="submitBtn">
-        Submit &amp; Pay
-      </button>
-
-      <!-- Messages -->
-      <div class="msg" id="successMsg"></div>
-      <div class="msg" id="errorMsg"></div>
-
-      <p class="security-note">
-        <span>🔒 Secure</span> — Card data is encrypted via Authorize.net. We never store your payment info.
-      </p>
-
-    </form>
+  <!-- ══ ORDER MODE TOGGLE ══════════════════════════════════════ -->
+  <div class="mode-wrap">
+    <div class="mode-label">Order Type</div>
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="modePackageBtn" onclick="setMode('package')">Package Order</button>
+      <button class="mode-btn" id="modeAlcBtn" onclick="setMode('alacarte')">À La Carte</button>
+    </div>
   </div>
 
-  <script>
-    const BACKEND = 'https://angelis-backend.onrender.com';
+  <!-- ══ SECTION 2A — PACKAGES ══════════════════════════════════ -->
+  <div class="section" id="sec-packages">
+    <div class="section-hd">
+      <div class="section-badge">2</div>
+      <div class="section-title">Package Selection</div>
+    </div>
+    <div class="section-err" id="err-package">Please select a package.</div>
+    <div id="pkg-list"><!-- rendered by JS --></div>
+  </div>
 
-    // ── Card number formatting ───────────────────────────────
-    document.getElementById('cardNumber').addEventListener('input', function(e) {
-      let v = e.target.value.replace(/\D/g, '').substring(0, 16);
-      e.target.value = v.replace(/(.{4})/g, '$1 ').trim();
+  <!-- ══ SECTION 3 — CUSTOMIZATION ══════════════════════════════ -->
+  <div class="section" id="sec-customize" style="display:none">
+    <div class="section-hd">
+      <div class="section-badge">3</div>
+      <div class="section-title">Customize Your Menu</div>
+    </div>
+    <div id="customize-body"><!-- rendered by JS --></div>
+  </div>
+
+  <!-- ══ SECTION 2B — À LA CARTE ════════════════════════════════ -->
+  <div class="section" id="sec-alacarte" style="display:none">
+    <div class="section-hd">
+      <div class="section-badge">2</div>
+      <div class="section-title">À La Carte Menu</div>
+    </div>
+    <p class="section-sub">Select sizes and quantities. Running total updates below.</p>
+    <div id="alc-body"><!-- rendered by JS --></div>
+  </div>
+
+  <!-- ══ SECTION — ADD-ONS ══════════════════════════════════════ -->
+  <div class="section" id="sec-addons">
+    <div class="section-hd">
+      <div class="section-badge" id="addons-badge">4</div>
+      <div class="section-title">Add-Ons</div>
+    </div>
+    <p class="section-sub">Optional</p>
+    <div id="addons-body"><!-- rendered by JS --></div>
+  </div>
+
+  <!-- ══ SECTION — SUMMARY + SUBMIT ═════════════════════════════ -->
+  <div class="section" id="sec-submit">
+    <div class="section-hd">
+      <div class="section-badge" id="submit-badge">5</div>
+      <div class="section-title">Order Summary &amp; Submit</div>
+    </div>
+
+    <div class="field">
+      <label class="lbl" for="specialInstructions">Special Instructions / Dietary Needs</label>
+      <textarea id="specialInstructions" placeholder="Allergies, setup details, questions, etc."></textarea>
+    </div>
+
+    <!-- Summary card -->
+    <div class="summary-card" id="summary-card">
+      <div class="summary-title">Live Order Summary</div>
+      <div class="gold-divider"></div>
+      <div id="summary-rows"><!-- rendered by JS --></div>
+      <div class="summary-divider"></div>
+      <div class="summary-total-row">
+        <div class="summary-total-label">Estimated Total</div>
+        <div class="summary-total-amt" id="summary-total">—</div>
+      </div>
+      <div class="summary-note" id="summary-note">* Tray charge is $4.00 per catering item. Final pricing confirmed upon booking.</div>
+    </div>
+
+    <!-- Payment -->
+    <div class="payment-card">
+      <div class="payment-hd">
+        <span>💳</span>
+        <div class="payment-title">Payment</div>
+      </div>
+      <div class="gold-divider"></div>
+      <p class="payment-note" id="payment-note">Your card will be charged the estimated total upon submission.</p>
+
+      <div class="field">
+        <label class="lbl" for="cardName">Name on Card <span class="req">*</span></label>
+        <input type="text" id="cardName" placeholder="First Last" autocomplete="cc-name" />
+        <div class="field-err" id="err-cardName">Name on card is required</div>
+      </div>
+
+      <div class="field">
+        <label class="lbl" for="cardNumber">Card Number <span class="req">*</span></label>
+        <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" inputmode="numeric" autocomplete="cc-number" />
+        <div class="field-err" id="err-cardNumber">Enter a valid card number</div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label class="lbl" for="cardExpiry">Exp Date <span class="req">*</span></label>
+          <input type="text" id="cardExpiry" placeholder="MM/YY" maxlength="5" inputmode="numeric" autocomplete="cc-exp" />
+          <div class="field-err" id="err-cardExpiry">Enter expiry as MM/YY</div>
+        </div>
+        <div class="field">
+          <label class="lbl" for="cardCVV">CVV <span class="req">*</span></label>
+          <input type="text" id="cardCVV" placeholder="123" maxlength="4" inputmode="numeric" autocomplete="cc-csc" />
+          <div class="field-err" id="err-cardCVV">Enter a valid CVV</div>
+        </div>
+      </div>
+
+      <div class="secure-note">🔒 Secured via Authorize.net. We never store your payment info.</div>
+    </div>
+
+    <button class="submit-btn" id="submitBtn" onclick="handleSubmit()">Pay &amp; Submit Order</button>
+    <div class="msg" id="successMsg"></div>
+    <div class="msg" id="errorMsg"></div>
+  </div>
+
+</div><!-- /wrap -->
+
+<script>
+// ─── Constants ─────────────────────────────────────────────────────────────────
+const BACKEND = 'https://angelis-backend.onrender.com';
+const EMAILJS_SERVICE_ID  = 'service_wpegsbr';
+const EMAILJS_TEMPLATE_ID = 'template_sohy57n';
+const EMAILJS_PUBLIC_KEY  = '255CdHzjhR1mqmV0X';
+const TRAY_CHARGE   = 4.00;
+const DELIVERY_FEE  = 45.00;
+const TAX_RATE      = 0.0775;
+const ALC_DESSERT_PRICE = 1.50;
+
+// ─── Data ───────────────────────────────────────────────────────────────────────
+const PACKAGES = [
+  { id:'essential', name:'Essential',           price:11.95, trayCount:3,
+    desc:'Salad · Pasta · Bread, Butter & Parmesan' },
+  { id:'classic',   name:'Classic',             price:16.95, trayCount:4,
+    desc:'Salad · Pasta · Chicken · Bread, Butter & Parmesan' },
+  { id:'italian',   name:'Italian',             price:17.95, trayCount:4,
+    desc:'Salad · Pasta · Italian Beef Sandwiches · Bread, Butter & Parmesan' },
+  { id:'premium',   name:'Premium',             price:24.95, trayCount:7,
+    desc:'2 Appetizers · Salad · Pasta · Chicken · Bread, Butter & Parmesan · Assorted Italian Pastries' },
+  { id:'app1',      name:'Appetizer Package #1', price:24.95, trayCount:5, minGuests:20,
+    desc:'Antipasto display · Butternut Gnocchi · Mini Meatballs · Caprese Flatbread · Spicy Peppadew Peppers' },
+  { id:'app2',      name:'Appetizer Package #2', price:25.95, trayCount:7, minGuests:20,
+    desc:'Stuffed Mushrooms · Sausage & Pepper Kabobs · Bruschetta · Bacon Wrapped Dates · Mini Meatballs · Toasted Raviolis · Mini Chicken Parm Sandwiches' },
+];
+
+const SALAD_OPTIONS  = ['House Salad','Caesar Salad',"Angeli's Special Salad"];
+const PASTA_SAUCE_ALL = ['Marinara','Vodka Cream','Primavera','Bolognese','Alfredo','Pasta & Peas','Baked Mostaccioli'];
+const PASTA_SAUCE_IT  = ['Marinara','Bolognese'];
+const PASTA_TYPES     = ['Rigatoni','Mostaccioli','Rotini'];
+const CHICKEN_OPTIONS = ['Chicken Vesuvio','Chicken Piccata','Chicken Marsala','Chicken Limone','Chicken Margarita','Chicken Parmigiana'];
+const APP_OPTIONS     = ['Bruschetta','Toasted Ravioli','Mini Meatballs','Caprese Kabobs','Roasted Pepper & Caper Crostini','Sausage & Peppers','Mini Sausage','Caprese Flatbread','Bacon Wrapped Dates'];
+
+const ADD_ONS = [
+  { id:'disposable', label:'Disposable plates/utensils', price:1.50, perPerson:true },
+];
+
+const ALC_SALADS = [
+  { id:'house_salad',       name:'House Salad',
+    sub:'Romaine, tomatoes, black olives, red onion, balsamic vinaigrette, creamy garlic, or ranch',
+    smallLabel:'Small Bowl', smallPrice:25, halfLabel:'Half Bowl', halfPrice:45, fullLabel:'Full Bowl', fullPrice:65 },
+  { id:'caesar_salad',      name:'Caesar Salad',
+    sub:'Romaine, homemade croutons, parmesan, creamy Caesar dressing',
+    smallLabel:'Small Bowl', smallPrice:35, halfLabel:'Half Bowl', halfPrice:40, fullLabel:'Full Bowl', fullPrice:75 },
+  { id:'special_salad',     name:"Angeli's Special Salad",
+    sub:'Spring lettuce, caramelized walnuts, pears, apples, bleu cheese, sweet raspberry vinaigrette',
+    smallLabel:'Small Bowl', smallPrice:40, halfLabel:'Half Bowl', halfPrice:55, fullLabel:'Full Bowl', fullPrice:75 },
+  { id:'chopped_antipasto', name:'Chopped Antipasto',
+    sub:'Romaine, chopped Italian meats & cheeses, house-made balsamic vinaigrette',
+    smallLabel:'Small Bowl', smallPrice:45, halfLabel:'Half Bowl', halfPrice:65, fullLabel:'Full Bowl', fullPrice:85 },
+  { id:'cold_pasta_ml',     name:'Cold Pasta Salad (meatless)',
+    sub:'Corkscrew pasta, cherry tomatoes, provolone, green peppers, black olives, roasted red peppers, Italian dressing',
+    smallLabel:'Small', smallPrice:35, halfLabel:'Half', halfPrice:55, fullLabel:'Full', fullPrice:90 },
+  { id:'cold_pasta_m',      name:'Cold Pasta Salad (w/ meat)',
+    sub:'Corkscrew pasta, salami, pepperoni, cherry tomatoes, provolone, green peppers, black olives, roasted red peppers, Italian dressing',
+    smallLabel:'Small', smallPrice:45, halfLabel:'Half', halfPrice:65, fullLabel:'Full', fullPrice:100 },
+];
+
+const ALC_PASTA = [
+  { id:'marinara',           name:'Marinara',                  halfPrice:40, fullPrice:60,  needsType:true  },
+  { id:'bolognese',          name:'Bolognese',                 halfPrice:40, fullPrice:60,  needsType:true  },
+  { id:'vodka_cream',        name:'Vodka Cream',               halfPrice:40, fullPrice:60,  needsType:true  },
+  { id:'alfredo',            name:'Alfredo',                   halfPrice:40, fullPrice:60,  needsType:true  },
+  { id:'pesto_cream',        name:'Pesto Cream',               halfPrice:40, fullPrice:60,  needsType:true  },
+  { id:'primavera',          name:'Primavera',                 halfPrice:40, fullPrice:60,  needsType:true  },
+  { id:'mac_cheese',         name:'Mac & Cheese',              halfPrice:40, fullPrice:60,  needsType:true  },
+  { id:'buttered_pasta',     name:'Buttered Pasta',            halfPrice:40, fullPrice:60,  needsType:true  },
+  { id:'pasta_peas',         name:'Pasta & Peas',              halfPrice:70, fullPrice:100 },
+  { id:'lasagna',            name:'Lasagna', sub:'Meat, Cheese, or Veggie', halfPrice:40, fullPrice:60 },
+  { id:'baked_most_mar',     name:'Baked Mostaccioli Marinara', halfPrice:40, fullPrice:60 },
+  { id:'baked_most_bol',     name:'Baked Mostaccioli Bolognese',halfPrice:40, fullPrice:60 },
+  { id:'meatballs',          name:'Meatballs (marinara)',      halfPrice:55, fullPrice:80  },
+  { id:'italian_sausage',    name:'Italian Sausage (marinara)',halfPrice:55, fullPrice:75  },
+  { id:'gnocchi_mar',        name:"Gnocchi's Marinara", sub:'Half pan 180 pcs · Full pan 360 pcs', halfPrice:60, fullPrice:110 },
+  { id:'gnocchi_vb',         name:"Gnocchi's Vodka Cream or Bolognese", sub:'Half pan 180 pcs · Full pan 360 pcs', halfPrice:70, fullPrice:120 },
+  { id:'gnocchi_butternut',  name:'Butternut Gnocchi Sweet Brown Sugar Cream', sub:'Full pan only · 60 pcs', halfPrice:null, fullPrice:75 },
+  { id:'ravioli_mar',        name:'Cheese Ravioli Marinara', sub:'Half pan 45 pcs · Full pan 90 pcs', halfPrice:60, fullPrice:110 },
+  { id:'ravioli_vb',         name:'Cheese Ravioli Vodka Cream or Bolognese', sub:'Half pan 45 pcs · Full pan 90 pcs', halfPrice:70, fullPrice:110 },
+  { id:'eggplant_parm',      name:'Eggplant Parmigiana', halfPrice:75, fullPrice:120 },
+];
+const ALC_PASTA_TYPES    = ['Rotini','Mostaccioli','Rigatoni'];
+const ALC_CHICKEN_PKG1   = ['Piccata','Marsala','Limone','Vesuvio'];
+const ALC_CHICKEN_PKG2   = ['Margherita','Armenta','Parmigiana','Saltimbocca','Jenella','Pesto','Florentine','Giardiniera'];
+const ALC_CHICKEN_SAUCES = ['Ranch','BBQ'];
+
+const ALC_SANDWICHES = [
+  { name:'Chicken Parmigiana',   price:60, sub:'' },
+  { name:'Meatball Sliders',     price:60, sub:'Sliced meatball and marinara' },
+  { name:'Shaved Turkey',        price:60, sub:'On a pretzel roll with avocado, bacon, provolone, tomato and light mayo' },
+  { name:'Shaved Ham',           price:60, sub:'On a pretzel roll with a brown sugar and mustard glaze' },
+  { name:'Shaved Roast Beef',    price:60, sub:'On a pretzel roll with swiss and horseradish cream' },
+  { name:'Vegetarian Focaccia',  price:60, sub:'Freshly baked tomato focaccia with marinated and grilled portabella, roasted red peppers, fresh basil and goat cheese' },
+  { name:'Filet Sliders',        price:75, sub:'Grilled filet with creamy horseradish and arugula' },
+];
+
+const ALC_DESSERTS = [
+  'Mini Brownies','Mini Carrot Cake','Mini Tiramisu','Mini Cannolis','Assorted Cookies',
+  'Assorted Mini Pastries','Mini New York Style Cheesecake',
+];
+
+const ALC_BREAD_OPTIONS = [
+  { loaves:0, label:'None',     price:0  },
+  { loaves:1, label:'1 Loaf',   price:20 },
+  { loaves:2, label:'2 Loaves', price:30 },
+  { loaves:3, label:'3 Loaves', price:40 },
+];
+
+const ALC_APPETIZERS = [
+  { name:'Mini Meatballs', price:1.00 },
+  { name:'Toasted Cheese Ravioli', price:1.25 },
+  { name:'Caprese Kabobs with aged balsamic', price:1.75 },
+  { name:'Bacon Wrapped Dates', price:1.75 },
+  { name:'Sausage & Pepper Kabobs', price:1.75 },
+  { name:'Fresh Fruit Kabobs (Mini)', price:1.50 },
+  { name:'Fresh Fruit Kabobs (Large)', price:3.00 },
+  { name:'Bruschetta', price:2.00 },
+  { name:'Peppadew Peppers with goat cheese & crushed almonds', price:2.00 },
+  { name:'Asparagus wrapped with Prosciutto, baked', price:2.00 },
+  { name:'Roasted Pepper & Caper Crostini', price:2.50 },
+  { name:'Caprese Flatbread', price:2.50, sub:'Fresh tomatoes, basil, fresh mozzarella, crispy prosciutto' },
+  { name:'Ricotta Flatbread w/ prosciutto, arugula and honey', price:2.50 },
+  { name:'Stuffed Mushrooms (Italian Sausage & herbs)', price:2.50 },
+  { name:'Shrimp Cocktail with lemons, Tabasco & cocktail sauce', price:3.00 },
+  { name:'Italian Beef (Filet)', price:null, priceNote:'+$15/dozen' },
+];
+
+// ─── State ──────────────────────────────────────────────────────────────────────
+let state = {
+  mode: 'package',       // 'package' | 'alacarte'
+  deliveryType: 'pickup',
+  selectedPkg: null,
+  salad: '', pastaSauce: '', pastaType: '', chicken: '',
+  appetizers: [],       // up to 2
+
+  addOns: {},
+
+  // À La Carte
+  alcSalads:    {},  // { id: { size:'small'|'half'|'full', qty } }
+  alcPasta:     {},  // { id: { size:'half'|'full', qty } }
+  alcPastaTypes:{},  // { id: 'Rotini' etc }
+  alcChicken:   { pkg1Style:'', pkg1Qty:0, pkg2Style:'', pkg2Qty:0, tendersQty:0, tendersSauce:'' },
+  alcBeefQty:   0,
+  alcBread:     { loaves:0, parm:false },
+  alcAppetizers:{},  // { name: dozens }
+  alcSandwiches:{},  // { name: dozens }
+  alcDesserts:  {},  // { name: qty }
+};
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+const fmt = (n) => `$${Number(n).toFixed(2)}`;
+const hasSalad   = (p) => p && ['essential','classic','italian','premium'].includes(p.id);
+const hasPasta   = (p) => p && ['essential','classic','italian','premium'].includes(p.id);
+const hasChicken = (p) => p && ['classic','premium'].includes(p.id);
+const hasApps    = (p) => p?.id === 'premium';
+
+// ─── Pricing ─────────────────────────────────────────────────────────────────
+function calcPricing() {
+  const guests = parseInt(document.getElementById('guestCount').value, 10) || 0;
+  const pkg    = state.selectedPkg;
+  const isDelivery = state.deliveryType === 'delivery';
+  const deliveryFee = isDelivery ? DELIVERY_FEE : 0;
+
+  if (state.mode === 'package') {
+    const pkgTotal  = pkg ? pkg.price * guests : 0;
+    const addOnTotal = ADD_ONS.reduce((s, ao) => s + (state.addOns[ao.id] ? (ao.perPerson ? ao.price * guests : ao.price) : 0), 0);
+    const trayCount = pkg ? pkg.trayCount : 0;
+    const trayTotal = trayCount * TRAY_CHARGE;
+    const subtotal  = pkgTotal + addOnTotal + trayTotal + deliveryFee;
+    const tax       = subtotal * TAX_RATE;
+    return { pkgTotal, addOnTotal, trayCount, trayTotal, alcTotal:0, alcTrayCount:0, alcTrayTotal:0, deliveryFee, subtotal, tax, total: subtotal+tax };
+  } else {
+    let alcTotal = 0, alcTrayCount = 0;
+
+    ALC_SALADS.forEach(item => {
+      const sel = state.alcSalads[item.id];
+      if (sel && sel.qty > 0) {
+        const price = sel.size==='small' ? item.smallPrice : sel.size==='half' ? item.halfPrice : item.fullPrice;
+        if (price != null) { alcTotal += price * sel.qty; alcTrayCount += sel.qty; }
+      }
     });
 
-    // ── Expiry formatting ─────────────────────────────────────
-    document.getElementById('cardExpiry').addEventListener('input', function(e) {
-      let v = e.target.value.replace(/\D/g, '').substring(0, 4);
-      if (v.length >= 3) v = v.substring(0,2) + '/' + v.substring(2);
-      e.target.value = v;
-    });
-
-    // ── Form submit ───────────────────────────────────────────
-    document.getElementById('cateringForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
-
-      const btn     = document.getElementById('submitBtn');
-      const successEl = document.getElementById('successMsg');
-      const errorEl   = document.getElementById('errorMsg');
-
-      successEl.className = 'msg';
-      successEl.textContent = '';
-      errorEl.className = 'msg';
-      errorEl.textContent = '';
-
-      // ── Grab values ─────────────────────────────────────────
-      const firstName  = document.getElementById('firstName').value.trim();
-      const lastName   = document.getElementById('lastName').value.trim();
-      const email      = document.getElementById('email').value.trim();
-      const phone      = document.getElementById('phone').value.trim();
-      const eventDate  = document.getElementById('eventDate').value;
-      const guestCount = document.getElementById('guestCount').value;
-      const eventType  = document.getElementById('eventType').value;
-      const notes      = document.getElementById('notes').value.trim();
-      const amount     = parseFloat(document.getElementById('amount').value);
-      const cardNumber = document.getElementById('cardNumber').value.replace(/\s/g, '');
-      const cardExpiry = document.getElementById('cardExpiry').value.trim();
-      const cardCVV    = document.getElementById('cardCVV').value.trim();
-
-      // ── Basic validation ─────────────────────────────────────
-      if (!firstName || !lastName || !email || !phone ||
-          !eventDate || !guestCount || !eventType ||
-          !cardNumber || !cardExpiry || !cardCVV) {
-        errorEl.textContent = 'Please fill in all required fields.';
-        errorEl.className = 'msg error';
-        return;
-      }
-      if (isNaN(amount) || amount <= 0) {
-        errorEl.textContent = 'Please enter a valid payment amount.';
-        errorEl.className = 'msg error';
-        return;
-      }
-
-      const displayAmount = amount.toFixed(2);
-
-      // ── Loading state ─────────────────────────────────────────
-      btn.disabled = true;
-      btn.innerHTML = '<span class="spinner"></span>Processing…';
-
-      try {
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 60000);
-
-        const res = await fetch(`${BACKEND}/charge`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          signal: controller.signal,
-          body: JSON.stringify({
-            cardNumber,
-            cardExpiry,
-            cardCVV,
-            amount: displayAmount,
-            firstName,
-            lastName,
-            email,
-            orderDescription: `Catering Payment — ${eventType} on ${eventDate} (${guestCount} guests)${notes ? ' | ' + notes : ''}`,
-          }),
-        });
-
-        clearTimeout(timeout);
-        const data = await res.json();
-
-        if (data.success) {
-          successEl.innerHTML = `
-            <strong>Booking confirmed! 🎉</strong><br>
-            Your payment of $${displayAmount} has been processed (Transaction ID: ${data.transactionId}).<br>
-            We'll be in touch within 24 hours at <strong>${email}</strong>.
-          `;
-          successEl.className = 'msg success';
-          document.getElementById('cateringForm').reset();
-          btn.textContent = 'Payment Complete ✓';
-        } else {
-          errorEl.textContent = data.error || 'Payment failed. Please check your card details and try again.';
-          errorEl.className = 'msg error';
-          btn.disabled = false;
-          btn.textContent = 'Submit & Pay';
-        }
-      } catch (err) {
-        const isTimeout = err.name === 'AbortError';
-        errorEl.textContent = isTimeout
-          ? 'Request timed out. Our server may be warming up — please try again in 30 seconds.'
-          : 'Network error. Please check your connection and try again.';
-        errorEl.className = 'msg error';
-        btn.disabled = false;
-        btn.textContent = 'Submit & Pay';
+    ALC_PASTA.forEach(item => {
+      const sel = state.alcPasta[item.id];
+      if (sel && sel.qty > 0) {
+        const price = sel.size==='half' ? item.halfPrice : item.fullPrice;
+        alcTotal += price * sel.qty; alcTrayCount += sel.qty;
       }
     });
 
-    // ── Warm up backend on load ───────────────────────────────
-    fetch(`${BACKEND}/health`).catch(() => {});
-  </script>
+    if (state.alcChicken.pkg1Qty > 0) { alcTotal += state.alcChicken.pkg1Qty * 8; alcTrayCount++; }
+    if (state.alcChicken.pkg2Qty > 0) { alcTotal += state.alcChicken.pkg2Qty * 9; alcTrayCount++; }
+    if (state.alcChicken.tendersQty > 0) {
+      alcTotal += state.alcChicken.tendersQty * 2;
+      if (state.alcChicken.tendersSauce) alcTotal += 5;
+      alcTrayCount++;
+    }
 
+    if (state.alcBeefQty > 0) { alcTotal += state.alcBeefQty * 120; alcTrayCount += state.alcBeefQty; }
+
+    const breadPrices = [0,20,30,40];
+    if (state.alcBread.loaves > 0) { alcTotal += breadPrices[state.alcBread.loaves]; alcTrayCount++; }
+    if (state.alcBread.parm) alcTotal += 5;
+
+    Object.entries(state.alcSandwiches).forEach(([name, qty]) => {
+      if (qty > 0) { const s = ALC_SANDWICHES.find(x=>x.name===name); if(s){ alcTotal += s.price*qty; alcTrayCount += qty; } }
+    });
+    Object.entries(state.alcDesserts).forEach(([,qty]) => {
+      if (qty > 0) { alcTotal += qty * ALC_DESSERT_PRICE; alcTrayCount++; }
+    });
+
+    const addOnTotal   = ADD_ONS.reduce((s, ao) => s + (state.addOns[ao.id] ? (ao.perPerson ? ao.price * guests : ao.price) : 0), 0);
+    const alcTrayTotal = alcTrayCount * TRAY_CHARGE;
+    const subtotal     = alcTotal + alcTrayTotal + addOnTotal + deliveryFee;
+    const tax          = subtotal * TAX_RATE;
+    return { pkgTotal:0, addOnTotal, trayCount:0, trayTotal:0, alcTotal, alcTrayCount, alcTrayTotal, deliveryFee, subtotal, tax, total: subtotal+tax };
+  }
+}
+
+// ─── Summary renderer ────────────────────────────────────────────────────────
+function updateSummary() {
+  const guests = parseInt(document.getElementById('guestCount').value, 10) || 0;
+  const pkg    = state.selectedPkg;
+  const p      = calcPricing();
+
+  let rows = '';
+  if (state.mode === 'package') {
+    rows += `<div class="summary-row"><span class="sl">Package</span><span class="sv">${pkg ? `${pkg.name} (${fmt(pkg.price)}/pp × ${guests||'?'})` : '—'}</span></div>`;
+    rows += `<div class="summary-row"><span class="sl">Package Subtotal</span><span class="sv">${pkg && guests ? fmt(p.pkgTotal) : '—'}</span></div>`;
+    if (p.addOnTotal > 0) rows += `<div class="summary-row"><span class="sl">Add-Ons</span><span class="sv">${fmt(p.addOnTotal)}</span></div>`;
+    rows += `<div class="summary-row"><span class="sl">Tray Charge (${p.trayCount} × $4.00)</span><span class="sv">${pkg ? fmt(p.trayTotal) : '—'}</span></div>`;
+    if (p.deliveryFee > 0) rows += `<div class="summary-row"><span class="sl">Delivery Fee</span><span class="sv">${fmt(p.deliveryFee)}</span></div>`;
+    document.getElementById('summary-note').textContent = '* Tray charge is $4.00 per catering item. Final pricing confirmed upon booking.';
+  } else {
+    rows += `<div class="summary-row"><span class="sl">À La Carte Items</span><span class="sv">${p.alcTotal > 0 ? fmt(p.alcTotal) : '—'}</span></div>`;
+    if (p.alcTrayCount > 0) rows += `<div class="summary-row"><span class="sl">Tray Charge (${p.alcTrayCount} × $4.00)</span><span class="sv">${fmt(p.alcTrayTotal)}</span></div>`;
+    if (p.addOnTotal > 0) rows += `<div class="summary-row"><span class="sl">Add-Ons</span><span class="sv">${fmt(p.addOnTotal)}</span></div>`;
+    if (p.deliveryFee > 0) rows += `<div class="summary-row"><span class="sl">Delivery Fee</span><span class="sv">${fmt(p.deliveryFee)}</span></div>`;
+    rows += `<div class="summary-row"><span class="sl">Appetizers (priced by dozen)</span><span class="sv">On request</span></div>`;
+    document.getElementById('summary-note').textContent = '* Appetizer pricing will be confirmed. Final total confirmed upon booking.';
+  }
+
+  rows += `<div class="summary-divider"></div>`;
+  rows += `<div class="summary-row"><span class="sl">Subtotal</span><span class="sv">${p.subtotal > 0 ? fmt(p.subtotal) : '—'}</span></div>`;
+  rows += `<div class="summary-row"><span class="sl">Tax (7.75%)</span><span class="sv">${p.tax > 0 ? fmt(p.tax) : '—'}</span></div>`;
+
+  document.getElementById('summary-rows').innerHTML = rows;
+  document.getElementById('summary-total').textContent = p.total > 0 ? fmt(p.total) : '—';
+  document.getElementById('payment-note').textContent =
+    p.total > 0
+      ? `Your card will be charged ${fmt(p.total)} upon submission.`
+      : 'Your card will be charged the estimated total upon submission.';
+}
+
+// ─── Package rendering ────────────────────────────────────────────────────────
+function renderPackages() {
+  const guests = parseInt(document.getElementById('guestCount').value, 10) || 0;
+  document.getElementById('pkg-list').innerHTML = PACKAGES.map(p => {
+    const isSelected = state.selectedPkg?.id === p.id;
+    const minOk = !p.minGuests || guests === 0 || guests >= p.minGuests;
+    return `
+      <div class="pkg-card${isSelected?' selected':''}${!minOk?' style="opacity:.5"':''}" onclick="selectPkg('${p.id}')">
+        <div class="pkg-card-top">
+          <div>
+            <div class="pkg-name">${p.name}</div>
+            ${p.minGuests ? `<div class="pkg-min">Min. ${p.minGuests} guests</div>` : ''}
+          </div>
+          <div class="pkg-price-block">
+            <div class="pkg-price">${fmt(p.price)}</div>
+            <div class="pkg-pp">/person</div>
+          </div>
+          <div class="pkg-radio"><div class="pkg-radio-inner"></div></div>
+        </div>
+        <div class="pkg-desc">${p.desc}</div>
+      </div>`;
+  }).join('');
+}
+
+function selectPkg(id) {
+  state.selectedPkg = PACKAGES.find(p=>p.id===id) || null;
+  state.salad=''; state.pastaSauce=''; state.pastaType=''; state.chicken=''; state.appetizers=[];
+  document.getElementById('err-package').classList.remove('show');
+  renderPackages();
+  renderCustomize();
+  updateSummary();
+}
+
+// ─── Customization rendering ─────────────────────────────────────────────────
+function renderCustomize() {
+  const pkg = state.selectedPkg;
+  if (!pkg || !(hasSalad(pkg)||hasPasta(pkg)||hasChicken(pkg)||hasApps(pkg))) {
+    document.getElementById('sec-customize').style.display = 'none';
+    return;
+  }
+  document.getElementById('sec-customize').style.display = '';
+  const sauces = pkg.id==='italian' ? PASTA_SAUCE_IT : PASTA_SAUCE_ALL;
+  let html = '';
+
+  if (hasSalad(pkg)) {
+    html += `<div class="field"><label class="lbl">Salad Choice <span class="req">*</span></label>
+      <div class="chip-row">${SALAD_OPTIONS.map(o=>`<div class="chip${state.salad===o?' selected':''}" onclick="setState('salad','${o}')">${o}</div>`).join('')}</div>
+      <div class="field-err${!state.salad&&showErrs?' show':''}" id="err-salad">Please choose a salad</div></div>`;
+  }
+  if (hasPasta(pkg)) {
+    html += `<div class="field"><label class="lbl">Pasta Sauce <span class="req">*</span></label>
+      ${pkg.id==='italian'?'<div style="font-size:11px;color:var(--gray);font-style:italic;margin-bottom:6px">Italian package: Marinara or Bolognese only</div>':''}
+      <div class="chip-row">${sauces.map(o=>`<div class="chip${state.pastaSauce===o?' selected':''}" onclick="setState('pastaSauce','${o}')">${o}</div>`).join('')}</div>
+      <div class="field-err${!state.pastaSauce&&showErrs?' show':''}" id="err-pastaSauce">Please choose a pasta sauce</div></div>`;
+    html += `<div class="field"><label class="lbl">Pasta Type <span class="req">*</span></label>
+      <div class="chip-row">${PASTA_TYPES.map(o=>`<div class="chip${state.pastaType===o?' selected':''}" onclick="setState('pastaType','${o}')">${o}</div>`).join('')}</div>
+      <div class="field-err${!state.pastaType&&showErrs?' show':''}" id="err-pastaType">Please choose a pasta type</div></div>`;
+  }
+  if (hasChicken(pkg)) {
+    html += `<div class="field"><label class="lbl">Chicken Preparation <span class="req">*</span></label>
+      <div style="font-size:11px;color:var(--gray);font-style:italic;margin-bottom:6px">One 5oz boneless breast per person</div>
+      <div class="chip-row">${CHICKEN_OPTIONS.map(o=>`<div class="chip${state.chicken===o?' selected':''}" onclick="setState('chicken','${o}')">${o}</div>`).join('')}</div>
+      <div class="field-err${!state.chicken&&showErrs?' show':''}" id="err-chicken">Please choose a chicken preparation</div></div>`;
+  }
+  if (hasApps(pkg)) {
+    html += `<div class="field"><label class="lbl">Appetizers — choose 2 <span class="req">*</span></label>
+      <div class="chip-row">${APP_OPTIONS.map(o=>{
+        const sel = state.appetizers.includes(o);
+        const dis = !sel && state.appetizers.length >= 2;
+        return `<div class="chip${sel?' selected':''}${dis?' disabled':''}" onclick="toggleApp('${o}')">${o}</div>`;
+      }).join('')}</div>
+      <div class="field-err${state.appetizers.length<2&&showErrs?' show':''}" id="err-appetizers">Please choose 2 appetizers</div></div>`;
+  }
+
+  document.getElementById('customize-body').innerHTML = html;
+}
+
+let showErrs = false;
+function setState(key, val) {
+  state[key] = val;
+  renderCustomize();
+  updateSummary();
+}
+function toggleApp(item) {
+  const i = state.appetizers.indexOf(item);
+  if (i > -1) { state.appetizers.splice(i,1); }
+  else if (state.appetizers.length < 2) { state.appetizers.push(item); }
+  renderCustomize();
+}
+
+// ─── Add-ons ─────────────────────────────────────────────────────────────────
+function renderAddOns() {
+  document.getElementById('addons-body').innerHTML = ADD_ONS.map(ao => {
+    const on = !!state.addOns[ao.id];
+    return `<div class="addon-row${on?' selected':''}" onclick="toggleAddOn('${ao.id}')">
+      <div class="checkbox"><span class="check-mark">✓</span></div>
+      <span class="addon-label">${ao.label}</span>
+      <span class="addon-price">+${fmt(ao.price)}${ao.perPerson?'/pp':''}</span>
+    </div>`;
+  }).join('');
+}
+function toggleAddOn(id) {
+  state.addOns[id] = !state.addOns[id];
+  renderAddOns();
+  updateSummary();
+}
+
+// ─── Delivery toggle ──────────────────────────────────────────────────────────
+function setDelivery(type) {
+  state.deliveryType = type;
+  document.querySelectorAll('.toggle-btn').forEach((b,i) => {
+    b.classList.toggle('active', (i===0&&type==='pickup')||(i===1&&type==='delivery'));
+  });
+  document.getElementById('deliveryAddrWrap').style.display = type==='delivery' ? '' : 'none';
+  updateSummary();
+}
+
+// ─── Order mode ───────────────────────────────────────────────────────────────
+function setMode(mode) {
+  state.mode = mode;
+  document.getElementById('modePackageBtn').classList.toggle('active', mode==='package');
+  document.getElementById('modeAlcBtn').classList.toggle('active', mode==='alacarte');
+  document.getElementById('sec-packages').style.display   = mode==='package' ? '' : 'none';
+  document.getElementById('sec-customize').style.display  = mode==='package' ? '' : 'none';
+  document.getElementById('sec-alacarte').style.display   = mode==='alacarte' ? '' : 'none';
+  document.getElementById('addons-badge').textContent     = mode==='alacarte' ? '3' : '4';
+  document.getElementById('submit-badge').textContent     = mode==='alacarte' ? '4' : '5';
+  if (mode==='package') renderPackages();
+  if (mode==='alacarte') renderAlacarte();
+  updateSummary();
+}
+
+// ─── Stepper helper ───────────────────────────────────────────────────────────
+function stepperHTML(id, val) {
+  return `<div class="stepper">
+    <button class="step-btn" onclick="stepChange('${id}',-1)">−</button>
+    <span class="step-val" id="sv-${id}">${val}</span>
+    <button class="step-btn" onclick="stepChange('${id}',1)">+</button>
+  </div>`;
+}
+function stepChange(id, delta) {
+  // Dispatches to specific handler based on id prefix
+  if (id.startsWith('alcSal-'))  { const [,itemId] = id.split('alcSal-'); updateAlcSalQty(itemId, delta); }
+  else if (id.startsWith('alcPas-')) { const [,itemId] = id.split('alcPas-'); updateAlcPasQty(itemId, delta); }
+  else if (id==='alcBeef')   { state.alcBeefQty = Math.max(0, state.alcBeefQty+delta); rerenderAlcBeef(); }
+  else if (id.startsWith('alcApp-')) { const name = id.slice(7); updateAlcApp(name, delta); }
+  else if (id.startsWith('alcSand-')) { const name = id.slice(8); updateAlcSand(name, delta); }
+  else if (id.startsWith('alcDes-')) { const name = id.slice(7); updateAlcDes(name, delta); }
+  else if (id==='alcChicken-p1') { state.alcChicken.pkg1Qty = Math.max(0, state.alcChicken.pkg1Qty+delta); rerenderAlcChicken(); }
+  else if (id==='alcChicken-p2') { state.alcChicken.pkg2Qty = Math.max(0, state.alcChicken.pkg2Qty+delta); rerenderAlcChicken(); }
+  else if (id==='alcChicken-t')  { state.alcChicken.tendersQty = Math.max(0, state.alcChicken.tendersQty+delta); rerenderAlcChicken(); }
+  updateSummary();
+}
+
+// ─── À La Carte rendering ─────────────────────────────────────────────────────
+function renderAlacarte() {
+  const c = document.getElementById('alc-body');
+  c.innerHTML = renderAlcSalads() + renderAlcPasta() + renderAlcChicken() + renderAlcBeef() + renderAlcSandwiches() + renderAlcBread() + renderAlcAppetizers() + renderAlcDesserts();
+  bindAlcEvents();
+}
+
+function renderAlcSalads() {
+  let html = `<div class="alc-cat"><div class="alc-cat-icon">🥗</div><div><div class="alc-cat-name">Salads</div></div></div>
+  <div class="alc-serving"><span>Small Bowl · serves 5–10</span><span>Half Bowl · serves 11–20</span><span>Full Bowl · serves 20–35</span></div>`;
+  ALC_SALADS.forEach(item => {
+    const sel = state.alcSalads[item.id] || { size: item.smallPrice ? 'small' : 'half', qty: 0 };
+    const price = sel.size==='small' ? item.smallPrice : sel.size==='half' ? item.halfPrice : item.fullPrice;
+    html += `<div class="alc-item" id="alcSalRow-${item.id}">
+      <div class="alc-name">${item.name}</div>
+      ${item.sub ? `<div class="alc-sub">${item.sub}</div>` : ''}
+      <div class="alc-sizes">
+        ${item.smallPrice != null ? `<div class="size-btn${sel.size==='small'?' active':''}" onclick="alcSalSize('${item.id}','small')"><div class="size-lbl">${item.smallLabel||'Small'}</div><div class="size-price">$${item.smallPrice}</div></div>` : ''}
+        ${item.halfPrice  != null ? `<div class="size-btn${sel.size==='half' ?' active':''}" onclick="alcSalSize('${item.id}','half')"><div class="size-lbl">${item.halfLabel||'Half'}</div><div class="size-price">$${item.halfPrice}</div></div>` : ''}
+        <div class="size-btn${sel.size==='full'?' active':''}" onclick="alcSalSize('${item.id}','full')"><div class="size-lbl">${item.fullLabel||'Full'}</div><div class="size-price">$${item.fullPrice}</div></div>
+      </div>
+      <div class="alc-qty-row">
+        ${stepperHTML('alcSal-'+item.id, sel.qty)}
+        ${sel.qty > 0 ? `<span class="alc-item-total" id="alcSalTot-${item.id}">${fmt((price||0)*sel.qty)}</span>` : `<span class="alc-item-total" id="alcSalTot-${item.id}"></span>`}
+      </div>
+    </div>`;
+  });
+  return html;
+}
+
+function alcSalSize(id, size) {
+  if (!state.alcSalads[id]) state.alcSalads[id] = { size, qty:0 };
+  else state.alcSalads[id].size = size;
+  rerenderAlcSalRow(id);
+  updateSummary();
+}
+function updateAlcSalQty(id, delta) {
+  if (!state.alcSalads[id]) state.alcSalads[id] = { size: 'half', qty:0 };
+  state.alcSalads[id].qty = Math.max(0, state.alcSalads[id].qty + delta);
+  rerenderAlcSalRow(id);
+}
+function rerenderAlcSalRow(id) {
+  const item = ALC_SALADS.find(x=>x.id===id);
+  const sel  = state.alcSalads[id] || { size:'half', qty:0 };
+  const price = sel.size==='small' ? item.smallPrice : sel.size==='half' ? item.halfPrice : item.fullPrice;
+  const sv = document.getElementById('sv-alcSal-'+id);
+  const tot = document.getElementById('alcSalTot-'+id);
+  if (sv) sv.textContent = sel.qty;
+  if (tot) tot.textContent = sel.qty>0 ? fmt((price||0)*sel.qty) : '';
+  // update size active
+  const row = document.getElementById('alcSalRow-'+id);
+  if (row) { row.querySelectorAll('.size-btn').forEach((btn,i)=>{
+    const sizes = ['small','half','full'].filter(s => s==='small'?item.smallPrice!=null:s==='half'?item.halfPrice!=null:true);
+    // simpler: re-check via data
+    btn.classList.toggle('active', btn.querySelector('.size-lbl')?.textContent === (sel.size==='small'?(item.smallLabel||'Small'):sel.size==='half'?(item.halfLabel||'Half'):(item.fullLabel||'Full')));
+  }); }
+}
+
+function renderAlcPasta() {
+  let html = `<div class="alc-divider"></div><div class="alc-cat"><div class="alc-cat-icon">🍝</div><div><div class="alc-cat-name">Pasta</div><div class="alc-cat-sub">Choose Rotini, Mostaccioli, or Rigatoni for pasta dishes</div></div></div>
+  <div class="alc-serving"><span>Half Pan · serves 10–15</span><span>Full Pan · serves 15–25</span></div>`;
+  ALC_PASTA.forEach(item => {
+    const sel = state.alcPasta[item.id] || { size: item.halfPrice ? 'half' : 'full', qty:0 };
+    const price = sel.size==='half' ? item.halfPrice : item.fullPrice;
+    html += `<div class="alc-item" id="alcPasRow-${item.id}">
+      <div class="alc-name">${item.name}</div>
+      ${item.sub ? `<div class="alc-sub">${item.sub}</div>` : ''}
+      <div class="alc-sizes">
+        ${item.halfPrice != null ? `<div class="size-btn${sel.size==='half'?' active':''}" onclick="alcPasSize('${item.id}','half')"><div class="size-lbl">Half Pan</div><div class="size-price">$${item.halfPrice}</div></div>` : ''}
+        <div class="size-btn${sel.size==='full'?' active':''}" onclick="alcPasSize('${item.id}','full')"><div class="size-lbl">Full Pan</div><div class="size-price">$${item.fullPrice}</div></div>
+      </div>
+      <div class="alc-qty-row">
+        ${stepperHTML('alcPas-'+item.id, sel.qty)}
+        <span class="alc-item-total" id="alcPasTot-${item.id}">${sel.qty>0 ? fmt((price||0)*sel.qty) : ''}</span>
+      </div>
+      ${item.needsType && sel.qty>0 ? `<div style="background:#f9f6f2;border-radius:6px;padding:8px 12px;margin-top:8px">
+        <div style="font-size:11px;font-weight:700;color:var(--burgundy);letter-spacing:.7px;text-transform:uppercase;margin-bottom:6px">Pasta Shape</div>
+        <div class="chip-row">${ALC_PASTA_TYPES.map(t=>`<div class="chip${state.alcPastaTypes[item.id]===t?' selected':''}" onclick="alcPasType('${item.id}','${t}')">${t}</div>`).join('')}</div>
+      </div>` : (item.needsType ? `<div id="alcPasTypeWrap-${item.id}"></div>` : '')}
+    </div>`;
+  });
+  return html;
+}
+
+function alcPasSize(id, size) {
+  if (!state.alcPasta[id]) state.alcPasta[id] = { size, qty:0 };
+  else state.alcPasta[id].size = size;
+  rerenderAlcPasRow(id);
+  updateSummary();
+}
+function alcPasType(id, type) {
+  state.alcPastaTypes[id] = state.alcPastaTypes[id]===type ? '' : type;
+  rerenderAlcPasRow(id);
+}
+function updateAlcPasQty(id, delta) {
+  if (!state.alcPasta[id]) state.alcPasta[id] = { size:'half', qty:0 };
+  state.alcPasta[id].qty = Math.max(0, state.alcPasta[id].qty + delta);
+  rerenderAlcPasRow(id);
+}
+function rerenderAlcPasRow(id) {
+  const item  = ALC_PASTA.find(x=>x.id===id);
+  const sel   = state.alcPasta[id] || { size:'half', qty:0 };
+  const price = sel.size==='half' ? item.halfPrice : item.fullPrice;
+  const sv  = document.getElementById('sv-alcPas-'+id);
+  const tot = document.getElementById('alcPasTot-'+id);
+  if (sv) sv.textContent = sel.qty;
+  if (tot) tot.textContent = sel.qty>0 ? fmt((price||0)*sel.qty) : '';
+  const wrap = document.getElementById('alcPasTypeWrap-'+id);
+  if (wrap && item.needsType) {
+    wrap.innerHTML = sel.qty>0 ? `<div style="background:#f9f6f2;border-radius:6px;padding:8px 12px;margin-top:8px">
+      <div style="font-size:11px;font-weight:700;color:var(--burgundy);letter-spacing:.7px;text-transform:uppercase;margin-bottom:6px">Pasta Shape</div>
+      <div class="chip-row">${ALC_PASTA_TYPES.map(t=>`<div class="chip${state.alcPastaTypes[id]===t?' selected':''}" onclick="alcPasType('${id}','${t}')">${t}</div>`).join('')}</div>
+    </div>` : '';
+  }
+}
+
+function renderAlcChicken() {
+  const ch = state.alcChicken;
+  return `<div class="alc-divider"></div><div class="alc-cat"><div class="alc-cat-icon">🍗</div><div><div class="alc-cat-name">Chicken</div><div class="alc-cat-sub">5oz boneless breast per person</div></div></div>
+  <div id="alc-chicken-inner">
+    <div class="chicken-block">
+      <div class="chicken-pkg-lbl">Package 1 — $8.00 each (Piccata, Marsala, Limone, Vesuvio)</div>
+      <div class="chip-row">${ALC_CHICKEN_PKG1.map(s=>`<div class="chip${ch.pkg1Style===s?' selected':''}" onclick="alcChickenStyle('pkg1','${s}')">${s}</div>`).join('')}</div>
+      <div class="chicken-qty-row">
+        <span class="chicken-qty-lbl">Qty (pieces)</span>
+        ${stepperHTML('alcChicken-p1', ch.pkg1Qty)}
+        ${ch.pkg1Qty>0 ? `<span class="alc-item-total">${fmt(ch.pkg1Qty*8)}</span>` : ''}
+      </div>
+    </div>
+    <div class="chicken-block">
+      <div class="chicken-pkg-lbl">Package 2 — $9.00 each (Margherita, Armenta, Parmigiana, Saltimbocca, Jenella, Pesto, Florentine, Giardiniera)</div>
+      <div class="chip-row">${ALC_CHICKEN_PKG2.map(s=>`<div class="chip${ch.pkg2Style===s?' selected':''}" onclick="alcChickenStyle('pkg2','${s}')">${s}</div>`).join('')}</div>
+      <div class="chicken-qty-row">
+        <span class="chicken-qty-lbl">Qty (pieces)</span>
+        ${stepperHTML('alcChicken-p2', ch.pkg2Qty)}
+        ${ch.pkg2Qty>0 ? `<span class="alc-item-total">${fmt(ch.pkg2Qty*9)}</span>` : ''}
+      </div>
+    </div>
+    <div class="chicken-block">
+      <div class="chicken-pkg-lbl">Chicken Tenders — $2.00 each</div>
+      <div class="chicken-qty-row">
+        <span class="chicken-qty-lbl">Qty (pieces)</span>
+        ${stepperHTML('alcChicken-t', ch.tendersQty)}
+        ${ch.tendersQty>0 ? `<span class="alc-item-total">${fmt(ch.tendersQty*2+(ch.tendersSauce?5:0))}</span>` : ''}
+      </div>
+      ${ch.tendersQty>0 ? `<div style="margin-top:8px">
+        <div class="chicken-qty-lbl">Add Sauce Container (+$5.00)</div>
+        <div class="chip-row" style="margin-top:6px">${ALC_CHICKEN_SAUCES.map(s=>`<div class="chip${ch.tendersSauce===s?' selected':''}" onclick="alcChickenSauce('${s}')">${s}</div>`).join('')}</div>
+      </div>` : ''}
+    </div>
+  </div>`;
+}
+
+function rerenderAlcChicken() {
+  document.getElementById('alc-chicken-inner').outerHTML = renderAlcChicken().replace(/^.*?<div id="alc-chicken-inner">/s,'<div id="alc-chicken-inner">');
+  // simpler: re-render whole alacarte section
+  renderAlacarte();
+}
+function alcChickenStyle(pkg, style) {
+  if (pkg==='pkg1') state.alcChicken.pkg1Style = state.alcChicken.pkg1Style===style ? '' : style;
+  else              state.alcChicken.pkg2Style = state.alcChicken.pkg2Style===style ? '' : style;
+  renderAlacarte();
+}
+function alcChickenSauce(sauce) {
+  state.alcChicken.tendersSauce = state.alcChicken.tendersSauce===sauce ? '' : sauce;
+  renderAlacarte();
+}
+
+function renderAlcBeef() {
+  const qty = state.alcBeefQty;
+  return `<div class="alc-divider"></div><div class="alc-cat"><div class="alc-cat-icon">🥩</div><div><div class="alc-cat-name">Italian Beef</div></div></div>
+  <div class="alc-item" id="alcBeefRow">
+    <div class="alc-name">Italian Beef</div>
+    <div class="alc-sub">Sweet Peppers & Giardiniera · $120 per 5 lbs · makes ~24 sandwiches</div>
+    <div class="alc-qty-row" style="margin-top:8px">
+      ${stepperHTML('alcBeef', qty)}
+      ${qty>0 ? `<span class="alc-item-total">${fmt(qty*120)}</span>` : ''}
+    </div>
+    ${qty>0 ? `<div class="alc-sub" style="margin-top:4px">${qty*5} lbs total — approx. ${qty*24} sandwiches</div>` : ''}
+  </div>`;
+}
+function rerenderAlcBeef() {
+  renderAlacarte();
+}
+
+function renderAlcSandwiches() {
+  let html = `<div class="alc-divider"></div><div class="alc-cat"><div class="alc-cat-icon">🥪</div><div><div class="alc-cat-name">Sandwiches</div><div class="alc-cat-sub">Priced per dozen · minimum 1 dozen</div></div></div>
+  <div class="alc-serving"><span>Most varieties — $60.00/dozen</span><span>Filet Sliders — $75.00/dozen</span></div>`;
+  ALC_SANDWICHES.forEach(s => {
+    const qty = state.alcSandwiches[s.name] || 0;
+    const safeId = s.name.replace(/[^a-zA-Z0-9]/g,'_');
+    html += `<div class="app-row">
+      <div class="app-name">${s.name}</div>
+      ${s.sub ? `<div class="app-sub">${s.sub}</div>` : ''}
+      <div class="app-price">$${s.price.toFixed(2)}/dozen</div>
+      <div class="app-qty-row">
+        ${stepperHTML('alcSand-'+s.name, qty)}
+        ${qty>0 ? `<span class="alc-dozen-lbl">${fmt(s.price*qty)}</span>` : ''}
+      </div>
+    </div>`;
+  });
+  return html;
+}
+function updateAlcSand(name, delta) {
+  state.alcSandwiches[name] = Math.max(0, (state.alcSandwiches[name]||0)+delta);
+  renderAlacarte();
+}
+
+function renderAlcBread() {
+  const b = state.alcBread;
+  return `<div class="alc-divider"></div><div class="alc-cat"><div class="alc-cat-icon">🍞</div><div><div class="alc-cat-name">Bread</div></div></div>
+  <div class="field"><label class="lbl">Loaves with Butter</label>
+  <div class="chip-row">${ALC_BREAD_OPTIONS.map(opt=>`<div class="chip${b.loaves===opt.loaves?' selected':''}" onclick="alcBreadLoaves(${opt.loaves})">${opt.price>0?`${opt.label}  $${opt.price}`:opt.label}</div>`).join('')}</div></div>
+  ${b.loaves>0 ? `<div class="parm-row" onclick="alcBreadParm()">
+    <div class="checkbox${b.parm?' selected':''} alc-parm-cb"><span class="check-mark${b.parm?'':' hide'}" style="${b.parm?'':'display:none'}">✓</span></div>
+    <span class="parm-lbl">Add Parmesan Cheese  <span class="parm-price">+$5.00</span></span>
+  </div>` : ''}`;
+}
+function alcBreadLoaves(n) { state.alcBread.loaves = n; renderAlacarte(); updateSummary(); }
+function alcBreadParm()    { state.alcBread.parm = !state.alcBread.parm; renderAlacarte(); updateSummary(); }
+
+function renderAlcAppetizers() {
+  let html = `<div class="alc-divider"></div><div class="alc-cat"><div class="alc-cat-icon">✨</div><div><div class="alc-cat-name">Appetizers</div><div class="alc-cat-sub">Minimum 1 dozen · priced per piece</div></div></div>
+  <div class="section-sub" style="margin-bottom:10px">Enter number of dozens needed. Totals calculated at 12 pieces per dozen.</div>`;
+  ALC_APPETIZERS.forEach(app => {
+    const qty = state.alcAppetizers[app.name] || 0;
+    const dozenTotal = app.price != null ? app.price * 12 * qty : null;
+    html += `<div class="app-row">
+      <div class="app-name">${app.name}</div>
+      ${app.sub ? `<div class="app-sub">${app.sub}</div>` : ''}
+      <div class="app-price">${app.priceNote ? app.priceNote : app.price != null ? `$${app.price.toFixed(2)}/pc · $${(app.price*12).toFixed(2)}/doz` : ''}</div>
+      <div class="app-qty-row">
+        ${stepperHTML('alcApp-'+app.name, qty)}
+        ${qty>0 ? `<span class="alc-dozen-lbl">${dozenTotal != null ? fmt(dozenTotal) : qty+' doz.'}</span>` : ''}
+      </div>
+    </div>`;
+  });
+  return html;
+}
+function updateAlcApp(name, delta) {
+  state.alcAppetizers[name] = Math.max(0, (state.alcAppetizers[name]||0)+delta);
+  renderAlacarte();
+  updateSummary();
+}
+
+function renderAlcDesserts() {
+  let html = `<div class="alc-divider"></div><div class="alc-cat"><div class="alc-cat-icon">🍮</div><div><div class="alc-cat-name">Desserts</div><div class="alc-cat-sub">$1.50 each · enter number of pieces</div></div></div>`;
+  ALC_DESSERTS.forEach(name => {
+    const qty = state.alcDesserts[name] || 0;
+    html += `<div class="app-row">
+      <div class="app-name">${name}</div>
+      <div class="app-price">$1.50/pc</div>
+      <div class="app-qty-row">
+        ${stepperHTML('alcDes-'+name, qty)}
+        ${qty>0 ? `<span class="alc-dozen-lbl">${fmt(qty*ALC_DESSERT_PRICE)}</span>` : ''}
+      </div>
+    </div>`;
+  });
+  return html;
+}
+function updateAlcDes(name, delta) {
+  state.alcDesserts[name] = Math.max(0, (state.alcDesserts[name]||0)+delta);
+  renderAlacarte();
+  updateSummary();
+}
+
+function bindAlcEvents() {
+  // Nothing extra needed — all onclick are global functions
+}
+
+// ─── Card input formatting ────────────────────────────────────────────────────
+document.getElementById('cardNumber').addEventListener('input', function(e) {
+  let v = e.target.value.replace(/\D/g,'').substring(0,16);
+  e.target.value = v.replace(/(.{4})/g,'$1 ').trim();
+});
+document.getElementById('cardExpiry').addEventListener('input', function(e) {
+  let v = e.target.value.replace(/\D/g,'').substring(0,4);
+  if (v.length >= 3) v = v.substring(0,2) + '/' + v.substring(2);
+  e.target.value = v;
+});
+document.getElementById('guestCount').addEventListener('input', () => {
+  renderPackages();
+  updateSummary();
+});
+
+// ─── Build ALC summary for email ─────────────────────────────────────────────
+function buildAlcSummary() {
+  const lines = [];
+  ALC_SALADS.forEach(item => {
+    const sel = state.alcSalads[item.id];
+    if (sel && sel.qty > 0) {
+      const sizeLabel = sel.size==='small'?(item.smallLabel||'Small'):sel.size==='half'?(item.halfLabel||'Half'):(item.fullLabel||'Full');
+      const price = sel.size==='small'?item.smallPrice:sel.size==='half'?item.halfPrice:item.fullPrice;
+      if (price != null) lines.push(`${item.name} — ${sizeLabel} ×${sel.qty}: $${(price*sel.qty).toFixed(2)}`);
+    }
+  });
+  ALC_PASTA.forEach(item => {
+    const sel = state.alcPasta[item.id];
+    if (sel && sel.qty > 0) {
+      const sizeLabel = sel.size==='half'?'Half Pan':'Full Pan';
+      const price = sel.size==='half'?item.halfPrice:item.fullPrice;
+      const typeStr = item.needsType && state.alcPastaTypes[item.id] ? ` (${state.alcPastaTypes[item.id]})` : '';
+      lines.push(`${item.name}${typeStr} — ${sizeLabel} ×${sel.qty}: $${(price*sel.qty).toFixed(2)}`);
+    }
+  });
+  const ch = state.alcChicken;
+  if (ch.pkg1Qty>0 && ch.pkg1Style) lines.push(`Chicken ${ch.pkg1Style} (Pkg 1) ×${ch.pkg1Qty}: $${(ch.pkg1Qty*8).toFixed(2)}`);
+  if (ch.pkg2Qty>0 && ch.pkg2Style) lines.push(`Chicken ${ch.pkg2Style} (Pkg 2) ×${ch.pkg2Qty}: $${(ch.pkg2Qty*9).toFixed(2)}`);
+  if (ch.tendersQty>0) {
+    let line = `Chicken Tenders ×${ch.tendersQty}: $${(ch.tendersQty*2).toFixed(2)}`;
+    if (ch.tendersSauce) line += ` + ${ch.tendersSauce} Sauce: $5.00`;
+    lines.push(line);
+  }
+  if (state.alcBeefQty>0) lines.push(`Italian Beef ×${state.alcBeefQty} (${state.alcBeefQty*5} lbs / ~${state.alcBeefQty*24} sandwiches): $${(state.alcBeefQty*120).toFixed(2)}`);
+  const breadPrices=[0,20,30,40];
+  if (state.alcBread.loaves>0) {
+    lines.push(`Bread — ${state.alcBread.loaves} loaf${state.alcBread.loaves>1?'ves':''} with butter: $${breadPrices[state.alcBread.loaves].toFixed(2)}`);
+    if (state.alcBread.parm) lines.push('Parmesan Cheese Add-On: $5.00');
+  }
+  Object.entries(state.alcAppetizers).forEach(([name,qty]) => {
+    if (qty>0) {
+      const app = ALC_APPETIZERS.find(a=>a.name===name);
+      const tot = app?.price != null ? `$${(app.price*12*qty).toFixed(2)}` : 'price on request';
+      lines.push(`${name} — ${qty} dozen: ${tot}`);
+    }
+  });
+  Object.entries(state.alcSandwiches).forEach(([name,qty]) => {
+    if (qty>0) { const s=ALC_SANDWICHES.find(x=>x.name===name); if(s) lines.push(`${name} — ${qty} dozen: $${(s.price*qty).toFixed(2)}`); }
+  });
+  Object.entries(state.alcDesserts).forEach(([name,qty]) => {
+    if (qty>0) lines.push(`${name} ×${qty}: $${(qty*ALC_DESSERT_PRICE).toFixed(2)}`);
+  });
+  return lines.join('\n') || 'None selected';
+}
+
+// ─── Validation ───────────────────────────────────────────────────────────────
+function validate() {
+  showErrs = true;
+  let ok = true;
+  const show = (id, cond) => {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('show', !cond);
+    if (!cond && ok) { ok = false; }
+  };
+
+  const name  = document.getElementById('contactName').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const date  = document.getElementById('eventDate').value;
+
+  show('err-name',  !!name);
+  show('err-phone', !!phone);
+  show('err-email', !!email && /\S+@\S+\.\S+/.test(email));
+  show('err-date',  !!date);
+
+  if (state.deliveryType === 'delivery') {
+    const addr = document.getElementById('deliveryAddress').value.trim();
+    show('err-addr', !!addr);
+  }
+
+  if (state.mode === 'package') {
+    const hasPkg = !!state.selectedPkg;
+    document.getElementById('err-package').classList.toggle('show', !hasPkg);
+    if (!hasPkg) ok = false;
+    if (state.selectedPkg) {
+      const pkg = state.selectedPkg;
+      renderCustomize();
+    }
+  }
+
+  // Card
+  const cn = document.getElementById('cardNumber').value.replace(/\s/g,'');
+  const ex = document.getElementById('cardExpiry').value;
+  const cv = document.getElementById('cardCVV').value;
+  const nm = document.getElementById('cardName').value.trim();
+  show('err-cardNumber', cn.length >= 13);
+  show('err-cardExpiry', /^\d{2}\/\d{2}$/.test(ex));
+  show('err-cardCVV',    cv.length >= 3);
+  show('err-cardName',   !!nm);
+
+  return ok;
+}
+
+// ─── Submit ───────────────────────────────────────────────────────────────────
+async function handleSubmit() {
+  if (!validate()) {
+    document.querySelector('.section-err.show, .field-err.show')?.scrollIntoView({ behavior:'smooth', block:'center' });
+    return;
+  }
+
+  const btn = document.getElementById('submitBtn');
+  const successEl = document.getElementById('successMsg');
+  const errorEl   = document.getElementById('errorMsg');
+  successEl.className = 'msg';
+  errorEl.className   = 'msg';
+
+  const p = calcPricing();
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Processing payment…';
+
+  const name     = document.getElementById('contactName').value.trim();
+  const phone    = document.getElementById('phone').value.trim();
+  const email    = document.getElementById('email').value.trim();
+  const date     = document.getElementById('eventDate').value;
+  const time     = document.getElementById('eventTime').value;
+  const guests   = document.getElementById('guestCount').value || '?';
+  const evtType  = document.getElementById('eventType').value || 'Not specified';
+  const notes    = document.getElementById('specialInstructions').value.trim();
+  const cardNum  = document.getElementById('cardNumber').value.replace(/\s/g,'');
+  const cardExp  = document.getElementById('cardExpiry').value.trim();
+  const cardCVV  = document.getElementById('cardCVV').value.trim();
+  const cardName = document.getElementById('cardName').value.trim();
+  const [firstName, ...lastParts] = cardName.split(' ');
+  const lastName = lastParts.join(' ') || '';
+
+  try {
+    // ── Charge card ─────────────────────────────────────────────────────────
+    const ctrl = new AbortController();
+    const timeout = setTimeout(() => ctrl.abort(), 60000);
+    const res = await fetch(`${BACKEND}/charge`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      signal: ctrl.signal,
+      body: JSON.stringify({
+        cardNumber: cardNum, cardExpiry: cardExp, cardCVV, email,
+        firstName, lastName,
+        amount: p.total.toFixed(2),
+        orderDescription: `Angeli's Catering - ${date}`,
+      }),
+    });
+    clearTimeout(timeout);
+    const charge = await res.json();
+
+    if (!charge.success) {
+      errorEl.textContent = charge.error || 'Payment declined. Please check your card details and try again.';
+      errorEl.className = 'msg error';
+      btn.disabled = false;
+      btn.textContent = 'Pay & Submit Order';
+      return;
+    }
+
+    // ── Send email ──────────────────────────────────────────────────────────
+    btn.innerHTML = '<span class="spinner"></span>Sending confirmation…';
+
+    const pkg = state.selectedPkg;
+    let emailParams = {
+      to_email: 'angeliscatering1478@gmail.com',
+      from_name: name, from_phone: phone, from_email: email,
+      event_date: date, event_time: time,
+      guest_count: guests, event_type: evtType,
+      service_type: state.deliveryType === 'delivery' ? 'Delivery' : 'Pickup',
+      delivery_address: state.deliveryType==='delivery' ? document.getElementById('deliveryAddress').value.trim() : 'N/A',
+      order_mode: state.mode==='alacarte' ? 'À La Carte' : 'Package',
+      addons: ADD_ONS.filter(ao=>state.addOns[ao.id]).map(ao=>ao.label).join('\n') || 'None',
+      addon_subtotal: fmt(p.addOnTotal),
+      subtotal: fmt(p.subtotal),
+      tax: fmt(p.tax),
+      order_total: fmt(p.total),
+      special_instructions: notes || 'None',
+      staffing_requested: 'No',
+      transaction_id: charge.transactionId || 'N/A',
+      auth_code: charge.authCode || 'N/A',
+    };
+
+    if (state.mode === 'package') {
+      const customLines = [];
+      if (hasSalad(pkg)) customLines.push(`Salad: ${state.salad}`);
+      if (hasPasta(pkg)) { customLines.push(`Pasta Sauce: ${state.pastaSauce}`); customLines.push(`Pasta Type: ${state.pastaType}`); }
+      if (hasChicken(pkg)) customLines.push(`Chicken: ${state.chicken}`);
+      if (hasApps(pkg)) customLines.push(`Appetizers: ${state.appetizers.join(', ')}`);
+      Object.assign(emailParams, {
+        package_name: pkg.name, package_price: fmt(pkg.price),
+        package_total: fmt(p.pkgTotal), customizations: customLines.join('\n') || 'None',
+        tray_count: p.trayCount, tray_total: fmt(p.trayTotal),
+        alacarte_items: 'N/A', alacarte_total: 'N/A',
+      });
+    } else {
+      Object.assign(emailParams, {
+        package_name: 'À La Carte Order', package_price: 'N/A',
+        package_total: 'N/A', customizations: 'N/A',
+        tray_count: p.alcTrayCount, tray_total: fmt(p.alcTrayTotal),
+        alacarte_items: buildAlcSummary(), alacarte_total: fmt(p.alcTotal),
+      });
+    }
+
+    await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', origin: 'https://angeliscatering.com' },
+      body: JSON.stringify({
+        service_id: EMAILJS_SERVICE_ID,
+        template_id: EMAILJS_TEMPLATE_ID,
+        user_id: EMAILJS_PUBLIC_KEY,
+        accessToken: 'unqm1kqGwz53KIW0d1NOH',
+        template_params: emailParams,
+      }),
+    });
+
+    // ── Success ──────────────────────────────────────────────────────────────
+    successEl.innerHTML = `
+      <strong>Order submitted! 🎉</strong><br>
+      Thank you, ${name}! Your payment of ${fmt(p.total)} has been processed
+      (Transaction ID: ${charge.transactionId}).<br>
+      We'll confirm your catering order within 24 hours at <strong>${email}</strong>.
+      For immediate help, call us at (630) 420-1370.
+    `;
+    successEl.className = 'msg success';
+    successEl.scrollIntoView({ behavior:'smooth', block:'center' });
+    btn.textContent = 'Order Submitted ✓';
+
+  } catch (err) {
+    const isTimeout = err.name === 'AbortError';
+    errorEl.textContent = isTimeout
+      ? 'Request timed out. Our server may be warming up — please wait 30 seconds and try again.'
+      : 'A network error occurred. Please check your connection and try again.';
+    errorEl.className = 'msg error';
+    btn.disabled = false;
+    btn.textContent = 'Pay & Submit Order';
+  }
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+renderPackages();
+renderAddOns();
+updateSummary();
+fetch(`${BACKEND}/health`).catch(()=>{});
+</script>
 </body>
 </html>
