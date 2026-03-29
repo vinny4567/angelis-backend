@@ -120,35 +120,6 @@
     }
     .card-grid .card-number { grid-column: 1 / -1; }
 
-    /* ── Amount display ─────────────────────────────────────── */
-    .amount-box {
-      background: #fdf8f0;
-      border: 1px solid #e08e30;
-      border-radius: 6px;
-      padding: 16px 20px;
-      margin: 24px 0;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .amount-box .amount-label {
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: #e08e30;
-    }
-    .amount-box .amount-value {
-      font-size: 22px;
-      font-weight: 700;
-      color: #3C3950;
-    }
-    .amount-box .amount-note {
-      font-size: 11px;
-      color: #999;
-      margin-top: 2px;
-    }
-
     /* ── Submit button ──────────────────────────────────────── */
     .submit-btn {
       width: 100%;
@@ -233,7 +204,7 @@
   <div class="form-header">
     <div class="script-title">Angeli's</div>
     <h1>Catering & Private Events</h1>
-    <p>Reserve your event and secure your date with a deposit. We'll confirm your booking within 24 hours.</p>
+    <p>Submit your catering request and complete payment. We'll confirm your booking within 24 hours.</p>
   </div>
 
   <div class="form-container">
@@ -303,15 +274,14 @@
         </div>
       </div>
 
-      <!-- ── Deposit / Payment ──────────────────────────────── -->
-      <div class="section-title">Deposit Payment</div>
+      <!-- ── Payment ────────────────────────────────────────── -->
+      <div class="section-title">Payment</div>
 
-      <div class="amount-box">
-        <div>
-          <div class="amount-label">Deposit Amount</div>
-          <div class="amount-note">Required to secure your date</div>
+      <div class="form-row single">
+        <div class="form-group">
+          <label for="amount">Amount *</label>
+          <input type="number" id="amount" name="amount" min="1" step="0.01" placeholder="Enter amount (e.g. 500.00)" required />
         </div>
-        <div class="amount-value">$250.00</div>
       </div>
 
       <div class="card-grid">
@@ -334,7 +304,7 @@
       </div>
 
       <button type="submit" class="submit-btn" id="submitBtn">
-        Submit &amp; Pay $250.00 Deposit
+        Submit &amp; Pay
       </button>
 
       <!-- Messages -->
@@ -350,7 +320,6 @@
 
   <script>
     const BACKEND = 'https://angelis-backend.onrender.com';
-    const DEPOSIT = 250.00;
 
     // ── Card number formatting ───────────────────────────────
     document.getElementById('cardNumber').addEventListener('input', function(e) {
@@ -387,6 +356,7 @@
       const guestCount = document.getElementById('guestCount').value;
       const eventType  = document.getElementById('eventType').value;
       const notes      = document.getElementById('notes').value.trim();
+      const amount     = parseFloat(document.getElementById('amount').value);
       const cardNumber = document.getElementById('cardNumber').value.replace(/\s/g, '');
       const cardExpiry = document.getElementById('cardExpiry').value.trim();
       const cardCVV    = document.getElementById('cardCVV').value.trim();
@@ -399,6 +369,13 @@
         errorEl.className = 'msg error';
         return;
       }
+      if (isNaN(amount) || amount <= 0) {
+        errorEl.textContent = 'Please enter a valid payment amount.';
+        errorEl.className = 'msg error';
+        return;
+      }
+
+      const displayAmount = amount.toFixed(2);
 
       // ── Loading state ─────────────────────────────────────────
       btn.disabled = true;
@@ -416,11 +393,11 @@
             cardNumber,
             cardExpiry,
             cardCVV,
-            amount: DEPOSIT.toFixed(2),
+            amount: displayAmount,
             firstName,
             lastName,
             email,
-            orderDescription: `Catering Deposit — ${eventType} on ${eventDate} (${guestCount} guests)${notes ? ' | ' + notes : ''}`,
+            orderDescription: `Catering Payment — ${eventType} on ${eventDate} (${guestCount} guests)${notes ? ' | ' + notes : ''}`,
           }),
         });
 
@@ -429,18 +406,18 @@
 
         if (data.success) {
           successEl.innerHTML = `
-            <strong>Booking request received! 🎉</strong><br>
-            Your $250.00 deposit has been processed (Transaction ID: ${data.transactionId}).<br>
-            We'll confirm your event within 24 hours at <strong>${email}</strong>.
+            <strong>Booking confirmed! 🎉</strong><br>
+            Your payment of $${displayAmount} has been processed (Transaction ID: ${data.transactionId}).<br>
+            We'll be in touch within 24 hours at <strong>${email}</strong>.
           `;
           successEl.className = 'msg success';
           document.getElementById('cateringForm').reset();
-          btn.textContent = 'Deposit Paid ✓';
+          btn.textContent = 'Payment Complete ✓';
         } else {
           errorEl.textContent = data.error || 'Payment failed. Please check your card details and try again.';
           errorEl.className = 'msg error';
           btn.disabled = false;
-          btn.textContent = 'Submit & Pay $250.00 Deposit';
+          btn.textContent = 'Submit & Pay';
         }
       } catch (err) {
         const isTimeout = err.name === 'AbortError';
@@ -449,7 +426,7 @@
           : 'Network error. Please check your connection and try again.';
         errorEl.className = 'msg error';
         btn.disabled = false;
-        btn.textContent = 'Submit & Pay $250.00 Deposit';
+        btn.textContent = 'Submit & Pay';
       }
     });
 
