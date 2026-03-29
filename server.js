@@ -120,15 +120,15 @@ app.post('/charge', async (req, res) => {
 
         return res.status(402).json({ success: false, error: errorMsg });
       } catch (innerErr) {
-        console.error('Authorize.net callback error:', innerErr);
+        console.error('Authorize.net callback error:', JSON.stringify(innerErr, Object.getOwnPropertyNames(innerErr)));
         if (!res.headersSent) {
-          return res.status(500).json({ success: false, error: 'Payment processing error. Please try again.' });
+          return res.status(500).json({ success: false, error: 'Payment processing error.', detail: innerErr.message });
         }
       }
     });
   } catch (outerErr) {
-    console.error('Authorize.net execute error:', outerErr);
-    return res.status(500).json({ success: false, error: 'Payment processing error. Please try again.' });
+    console.error('Authorize.net execute error:', JSON.stringify(outerErr, Object.getOwnPropertyNames(outerErr)));
+    return res.status(500).json({ success: false, error: 'Payment processing error.', detail: outerErr.message });
   }
 });
 
