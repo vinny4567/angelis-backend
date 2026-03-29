@@ -4,9 +4,14 @@ const express = require('express');
 const cors = require('cors');
 const { APIContracts, APIControllers, Constants } = require('authorizenet');
 
+const path = require('path');
+
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// ─── Serve static files (catering form, etc.) ──────────────────────────────────
+app.use(express.static(path.join(__dirname, 'public')));
 
 const PORT = process.env.PORT || 3001;
 const API_LOGIN_ID = process.env.AUTHORIZENET_API_LOGIN_ID;

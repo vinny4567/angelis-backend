@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Catering Inquiry & Payment — Angeli's Restaurant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&family=Herr+Von+Muellerhoff&display=swap" rel="stylesheet" />
+  <!-- Authorize.net Accept.js -->
+  <script type="text/javascript" src="https://js.authorize.net/v1/Accept.js" charset="utf-8"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: #ffffff;
+      color: #3C3950;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    /* ── Header ─────────────────────────────────────────────── */
+    .form-header {
+      text-align: center;
+      padding: 48px 24px 32px;
+      border-bottom: 1px solid #ececec;
+    }
+    .form-header .script-title {
+      font-family: 'Herr Von Muellerhoff', cursive;
+      font-size: 64px;
+      color: #e08e30;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .form-header h1 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #3C3950;
+      margin-bottom: 10px;
+    }
+    .form-header p {
+      font-size: 14px;
+      color: #777;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    /* ── Container ──────────────────────────────────────────── */
+    .form-container {
+      max-width: 680px;
+      margin: 48px auto;
+      padding: 0 24px 80px;
+    }
+
+    /* ── Section headers ────────────────────────────────────── */
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: #e08e30;
+      margin: 40px 0 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    /* ── Form fields ────────────────────────────────────────── */
+    .form-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .form-row.single { display: block; margin-bottom: 16px; }
+    .form-group {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #3C3950;
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="date"],
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #d9d9d9;
+      border-radius: 4px;
+      font-family: 'Open Sans', sans-serif;
+      font-size: 14px;
+      color: #3C3950;
+      background: #fff;
+      transition: border-color 0.2s;
+      outline: none;
+      -webkit-appearance: none;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: #e08e30;
+      box-shadow: 0 0 0 3px rgba(224,142,48,0.12);
+    }
+    textarea { resize: vertical; min-height: 100px; }
+    select { cursor: pointer; }
+
+    /* ── Payment card fields ────────────────────────────────── */
+    .card-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .card-grid .card-number { grid-column: 1 / -1; }
+
+    /* ── Amount display ─────────────────────────────────────── */
+    .amount-box {
+      background: #fdf8f0;
+      border: 1px solid #e08e30;
+      border-radius: 6px;
+      padding: 16px 20px;
+      margin: 24px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .amount-box .amount-label {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #e08e30;
+    }
+    .amount-box .amount-value {
+      font-size: 22px;
+      font-weight: 700;
+      color: #3C3950;
+    }
+    .amount-box .amount-note {
+      font-size: 11px;
+      color: #999;
+      margin-top: 2px;
+    }
+
+    /* ── Submit button ──────────────────────────────────────── */
+    .submit-btn {
+      width: 100%;
+      padding: 16px;
+      background: #e08e30;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-family: 'Open Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      margin-top: 32px;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .submit-btn:hover { background: #c97d28; }
+    .submit-btn:active { transform: scale(0.99); }
+    .submit-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* ── Messages ───────────────────────────────────────────── */
+    .msg {
+      display: none;
+      padding: 16px 20px;
+      border-radius: 6px;
+      font-size: 14px;
+      margin-top: 20px;
+      line-height: 1.5;
+    }
+    .msg.success {
+      background: #f0f9f4;
+      border: 1px solid #4caf50;
+      color: #2e7d32;
+      display: block;
+    }
+    .msg.error {
+      background: #fff0f0;
+      border: 1px solid #ef5350;
+      color: #c62828;
+      display: block;
+    }
+
+    /* ── Security badge ─────────────────────────────────────── */
+    .security-note {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 12px;
+      color: #aaa;
+    }
+    .security-note span { color: #4caf50; font-weight: 700; }
+
+    /* ── Spinner ────────────────────────────────────────────── */
+    .spinner {
+      display: inline-block;
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Responsive ─────────────────────────────────────────── */
+    @media (max-width: 520px) {
+      .form-header .script-title { font-size: 48px; }
+      .form-row { flex-direction: column; gap: 0; }
+      .card-grid { grid-template-columns: 1fr; }
+      .card-grid .card-number { grid-column: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="form-header">
+    <div class="script-title">Angeli's</div>
+    <h1>Catering & Private Events</h1>
+    <p>Reserve your event and secure your date with a deposit. We'll confirm your booking within 24 hours.</p>
+  </div>
+
+  <div class="form-container">
+    <form id="cateringForm" novalidate>
+
+      <!-- ── Event Details ───────────────────────────────────── -->
+      <div class="section-title">Event Details</div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="eventDate">Event Date *</label>
+          <input type="date" id="eventDate" name="eventDate" required />
+        </div>
+        <div class="form-group">
+          <label for="guestCount">Guest Count *</label>
+          <input type="number" id="guestCount" name="guestCount" min="1" placeholder="e.g. 50" required />
+        </div>
+      </div>
+
+      <div class="form-row single">
+        <div class="form-group">
+          <label for="eventType">Event Type *</label>
+          <select id="eventType" name="eventType" required>
+            <option value="" disabled selected>Select event type…</option>
+            <option>Wedding Reception</option>
+            <option>Corporate Event</option>
+            <option>Birthday Party</option>
+            <option>Rehearsal Dinner</option>
+            <option>Baby / Bridal Shower</option>
+            <option>Holiday Party</option>
+            <option>Graduation Party</option>
+            <option>Anniversary</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row single">
+        <div class="form-group">
+          <label for="notes">Additional Notes</label>
+          <textarea id="notes" name="notes" placeholder="Menu preferences, dietary restrictions, special requests…"></textarea>
+        </div>
+      </div>
+
+      <!-- ── Contact Info ───────────────────────────────────── -->
+      <div class="section-title">Contact Information</div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="firstName">First Name *</label>
+          <input type="text" id="firstName" name="firstName" placeholder="First name" required />
+        </div>
+        <div class="form-group">
+          <label for="lastName">Last Name *</label>
+          <input type="text" id="lastName" name="lastName" placeholder="Last name" required />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="email">Email *</label>
+          <input type="email" id="email" name="email" placeholder="you@example.com" required />
+        </div>
+        <div class="form-group">
+          <label for="phone">Phone Number *</label>
+          <input type="tel" id="phone" name="phone" placeholder="(630) 555-0000" required />
+        </div>
+      </div>
+
+      <!-- ── Deposit / Payment ──────────────────────────────── -->
+      <div class="section-title">Deposit Payment</div>
+
+      <div class="amount-box">
+        <div>
+          <div class="amount-label">Deposit Amount</div>
+          <div class="amount-note">Required to secure your date</div>
+        </div>
+        <div class="amount-value">$250.00</div>
+      </div>
+
+      <div class="card-grid">
+        <div class="form-group card-number">
+          <label for="cardNumber">Card Number *</label>
+          <input type="text" id="cardNumber" name="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" inputmode="numeric" autocomplete="cc-number" required />
+        </div>
+        <div class="form-group">
+          <label for="cardExpiry">Exp Date *</label>
+          <input type="text" id="cardExpiry" name="cardExpiry" placeholder="MM/YY" maxlength="5" inputmode="numeric" autocomplete="cc-exp" required />
+        </div>
+        <div class="form-group">
+          <label for="cardCVV">CVV *</label>
+          <input type="text" id="cardCVV" name="cardCVV" placeholder="123" maxlength="4" inputmode="numeric" autocomplete="cc-csc" required />
+        </div>
+        <div class="form-group" style="grid-column: 1 / -1">
+          <label for="cardName">Name on Card *</label>
+          <input type="text" id="cardName" name="cardName" placeholder="As it appears on your card" autocomplete="cc-name" required />
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">
+        Submit &amp; Pay $250.00 Deposit
+      </button>
+
+      <!-- Messages -->
+      <div class="msg" id="successMsg"></div>
+      <div class="msg" id="errorMsg"></div>
+
+      <p class="security-note">
+        <span>🔒 Secure</span> — Card data is encrypted via Authorize.net. We never store your payment info.
+      </p>
+
+    </form>
+  </div>
+
+  <script>
+    const BACKEND = 'https://angelis-backend.onrender.com';
+    const DEPOSIT = 250.00;
+
+    // ── Card number formatting ───────────────────────────────
+    document.getElementById('cardNumber').addEventListener('input', function(e) {
+      let v = e.target.value.replace(/\D/g, '').substring(0, 16);
+      e.target.value = v.replace(/(.{4})/g, '$1 ').trim();
+    });
+
+    // ── Expiry formatting ─────────────────────────────────────
+    document.getElementById('cardExpiry').addEventListener('input', function(e) {
+      let v = e.target.value.replace(/\D/g, '').substring(0, 4);
+      if (v.length >= 3) v = v.substring(0,2) + '/' + v.substring(2);
+      e.target.value = v;
+    });
+
+    // ── Form submit ───────────────────────────────────────────
+    document.getElementById('cateringForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const btn     = document.getElementById('submitBtn');
+      const successEl = document.getElementById('successMsg');
+      const errorEl   = document.getElementById('errorMsg');
+
+      successEl.className = 'msg';
+      successEl.textContent = '';
+      errorEl.className = 'msg';
+      errorEl.textContent = '';
+
+      // ── Grab values ─────────────────────────────────────────
+      const firstName  = document.getElementById('firstName').value.trim();
+      const lastName   = document.getElementById('lastName').value.trim();
+      const email      = document.getElementById('email').value.trim();
+      const phone      = document.getElementById('phone').value.trim();
+      const eventDate  = document.getElementById('eventDate').value;
+      const guestCount = document.getElementById('guestCount').value;
+      const eventType  = document.getElementById('eventType').value;
+      const notes      = document.getElementById('notes').value.trim();
+      const cardNumber = document.getElementById('cardNumber').value.replace(/\s/g, '');
+      const cardExpiry = document.getElementById('cardExpiry').value.trim();
+      const cardCVV    = document.getElementById('cardCVV').value.trim();
+
+      // ── Basic validation ─────────────────────────────────────
+      if (!firstName || !lastName || !email || !phone ||
+          !eventDate || !guestCount || !eventType ||
+          !cardNumber || !cardExpiry || !cardCVV) {
+        errorEl.textContent = 'Please fill in all required fields.';
+        errorEl.className = 'msg error';
+        return;
+      }
+
+      // ── Loading state ─────────────────────────────────────────
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span>Processing…';
+
+      try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 60000);
+
+        const res = await fetch(`${BACKEND}/charge`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          signal: controller.signal,
+          body: JSON.stringify({
+            cardNumber,
+            cardExpiry,
+            cardCVV,
+            amount: DEPOSIT.toFixed(2),
+            firstName,
+            lastName,
+            email,
+            orderDescription: `Catering Deposit — ${eventType} on ${eventDate} (${guestCount} guests)${notes ? ' | ' + notes : ''}`,
+          }),
+        });
+
+        clearTimeout(timeout);
+        const data = await res.json();
+
+        if (data.success) {
+          successEl.innerHTML = `
+            <strong>Booking request received! 🎉</strong><br>
+            Your $250.00 deposit has been processed (Transaction ID: ${data.transactionId}).<br>
+            We'll confirm your event within 24 hours at <strong>${email}</strong>.
+          `;
+          successEl.className = 'msg success';
+          document.getElementById('cateringForm').reset();
+          btn.textContent = 'Deposit Paid ✓';
+        } else {
+          errorEl.textContent = data.error || 'Payment failed. Please check your card details and try again.';
+          errorEl.className = 'msg error';
+          btn.disabled = false;
+          btn.textContent = 'Submit & Pay $250.00 Deposit';
+        }
+      } catch (err) {
+        const isTimeout = err.name === 'AbortError';
+        errorEl.textContent = isTimeout
+          ? 'Request timed out. Our server may be warming up — please try again in 30 seconds.'
+          : 'Network error. Please check your connection and try again.';
+        errorEl.className = 'msg error';
+        btn.disabled = false;
+        btn.textContent = 'Submit & Pay $250.00 Deposit';
+      }
+    });
+
+    // ── Warm up backend on load ───────────────────────────────
+    fetch(`${BACKEND}/health`).catch(() => {});
+  </script>
+
+</body>
+</html>
