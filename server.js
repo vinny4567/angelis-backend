@@ -85,34 +85,34 @@ app.post('/charge', async (req, res) => {
     ctrl.execute(() => {
       try {
         const apiResponse = ctrl.getResponse();
-        const response = new APIContracts.CreateTransactionResponse(apiResponse);
+        console.log('Raw API response:', JSON.stringify(apiResponse));
 
-        if (
-          response !== null &&
-          response.getMessages().getResultCode() === APIContracts.MessageTypeEnum.OK &&
-          response.getTransactionResponse() !== null &&
-          response.getTransactionResponse().getMessages() !== null
-        ) {
-          const txn = response.getTransactionResponse();
+        if (!apiResponse) {
+          return res.status(500).json({ success: false, error: 'No response from payment processor.' });
+        }
+
+        const response = new APIContracts.CreateTransactionResponse(apiResponse);
+        const txn = response.getTransactionResponse ? response.getTransactionResponse() : null;
+
+        // Success check
+        if (txn && txn.getTransId && txn.getTransId()) {
           return res.json({
             success: true,
             transactionId: txn.getTransId(),
-            authCode: txn.getAuthCode(),
-            message: txn.getMessages().getMessage()[0].getDescription(),
+            authCode: txn.getAuthCode ? txn.getAuthCode() : '',
+            message: 'Payment approved',
           });
         }
 
-        // Handle errors
-        let errorMsg = 'Payment failed';
+        // Error handling
+        let errorMsg = 'Payment declined. Please check your card details and try again.';
         try {
-          const txnResponse = response && response.getTransactionResponse ? response.getTransactionResponse() : null;
-          if (txnResponse && txnResponse.getErrors && txnResponse.getErrors()) {
-            errorMsg = txnResponse.getErrors().getError()[0].getErrorText();
-          } else if (response && response.getMessages) {
+          if (txn && txn.getErrors && txn.getErrors()) {
+            errorMsg = txn.getErrors().getError()[0].getErrorText();
+          } else if (response.getMessages && response.getMessages()) {
             errorMsg = response.getMessages().getMessage()[0].getText();
           }
         } catch (_) {}
-
 
         return res.status(402).json({ success: false, error: errorMsg });
       } catch (innerErr) {
