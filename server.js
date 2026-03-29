@@ -79,46 +79,57 @@ app.post('/charge', async (req, res) => {
 
   // ── Execute ────────────────────────────────────────────────────────────────────
   const ctrl = new APIControllers.CreateTransactionController(createRequest.getJSON());
-  ctrl.setEnvironment(Constants.endpoint.production); // use sandbox for testing
-  // ctrl.setEnvironment(Constants.endpoint.sandbox); // ← uncomment to test
+  ctrl.setEnvironment(Constants.endpoint.production);
 
-  ctrl.execute(() => {
-    const apiResponse = ctrl.getResponse();
-    const response = new APIContracts.CreateTransactionResponse(apiResponse);
+  try {
+    ctrl.execute(() => {
+      try {
+        const apiResponse = ctrl.getResponse();
+        const response = new APIContracts.CreateTransactionResponse(apiResponse);
 
-    if (
-      response !== null &&
-      response.getMessages().getResultCode() === APIContracts.MessageTypeEnum.OK &&
-      response.getTransactionResponse() !== null &&
-      response.getTransactionResponse().getMessages() !== null
-    ) {
-      const txn = response.getTransactionResponse();
-      return res.json({
-        success: true,
-        transactionId: txn.getTransId(),
-        authCode: txn.getAuthCode(),
-        message: txn.getMessages().getMessage()[0].getDescription(),
-      });
-    }
+        if (
+          response !== null &&
+          response.getMessages().getResultCode() === APIContracts.MessageTypeEnum.OK &&
+          response.getTransactionResponse() !== null &&
+          response.getTransactionResponse().getMessages() !== null
+        ) {
+          const txn = response.getTransactionResponse();
+          return res.json({
+            success: true,
+            transactionId: txn.getTransId(),
+            authCode: txn.getAuthCode(),
+            message: txn.getMessages().getMessage()[0].getDescription(),
+          });
+        }
 
-    // Handle errors
-    let errorMsg = 'Payment failed';
-    if (
-      response !== null &&
-      response.getTransactionResponse() !== null &&
-      response.getTransactionResponse().getErrors() !== null
-    ) {
-      errorMsg = response
-        .getTransactionResponse()
-        .getErrors()
-        .getError()[0]
-        .getErrorText();
-    } else if (response !== null) {
-      errorMsg = response.getMessages().getMessage()[0].getText();
-    }
+        // Handle errors
+        let errorMsg = 'Payment failed';
+        if (
+          response !== null &&
+          response.getTransactionResponse() !== null &&
+          response.getTransactionResponse().getErrors() !== null
+        ) {
+          errorMsg = response
+            .getTransactionResponse()
+            .getErrors()
+            .getError()[0]
+            .getErrorText();
+        } else if (response !== null) {
+          try { errorMsg = response.getMessages().getMessage()[0].getText(); } catch (_) {}
+        }
 
-    return res.status(402).json({ success: false, error: errorMsg });
-  });
+        return res.status(402).json({ success: false, error: errorMsg });
+      } catch (innerErr) {
+        console.error('Authorize.net callback error:', innerErr);
+        if (!res.headersSent) {
+          return res.status(500).json({ success: false, error: 'Payment processing error. Please try again.' });
+        }
+      }
+    });
+  } catch (outerErr) {
+    console.error('Authorize.net execute error:', outerErr);
+    return res.status(500).json({ success: false, error: 'Payment processing error. Please try again.' });
+  }
 });
 
 // ─── Start ─────────────────────────────────────────────────────────────────────
