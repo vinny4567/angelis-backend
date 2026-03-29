@@ -104,19 +104,15 @@ app.post('/charge', async (req, res) => {
 
         // Handle errors
         let errorMsg = 'Payment failed';
-        if (
-          response !== null &&
-          response.getTransactionResponse() !== null &&
-          response.getTransactionResponse().getErrors() !== null
-        ) {
-          errorMsg = response
-            .getTransactionResponse()
-            .getErrors()
-            .getError()[0]
-            .getErrorText();
-        } else if (response !== null) {
-          try { errorMsg = response.getMessages().getMessage()[0].getText(); } catch (_) {}
-        }
+        try {
+          const txnResponse = response && response.getTransactionResponse ? response.getTransactionResponse() : null;
+          if (txnResponse && txnResponse.getErrors && txnResponse.getErrors()) {
+            errorMsg = txnResponse.getErrors().getError()[0].getErrorText();
+          } else if (response && response.getMessages) {
+            errorMsg = response.getMessages().getMessage()[0].getText();
+          }
+        } catch (_) {}
+
 
         return res.status(402).json({ success: false, error: errorMsg });
       } catch (innerErr) {
