@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: angelis-backend
+    env: node
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: AUTHORIZENET_API_LOGIN_ID
+        sync: false
+      - key: AUTHORIZENET_TRANSACTION_KEY
+        sync: false
+      - key: PORT
+        value: 10000
