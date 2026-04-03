@@ -20,7 +20,7 @@ const TRANSACTION_KEY = process.env.AUTHORIZENET_TRANSACTION_KEY;
 // ─── Health Check ──────────────────────────────────────────────────────────────
 // Version: 2026-04-03-fix
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', service: "Angeli's Payment API" });
+  res.json({ status: "ok", service: "Angeli's Payment API", version: "2026-04-03-fix" });
 });
 
 // ─── Charge Card ───────────────────────────────────────────────────────────────
