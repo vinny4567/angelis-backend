@@ -18,8 +18,9 @@ const API_LOGIN_ID = process.env.AUTHORIZENET_API_LOGIN_ID;
 const TRANSACTION_KEY = process.env.AUTHORIZENET_TRANSACTION_KEY;
 
 // ─── Health Check ──────────────────────────────────────────────────────────────
+// Version: 2026-04-03-fix
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', service: "Angeli's Payment API" });
+  res.json({ status: "ok", service: "Angeli's Payment API", version: "2026-04-03-fix" });
 });
 
 // ─── Charge Card ───────────────────────────────────────────────────────────────
@@ -100,10 +101,12 @@ app.post('/charge', async (req, res) => {
         const txn = response.getTransactionResponse ? response.getTransactionResponse() : null;
 
         // Success check
-        if (txn && txn.getTransId && txn.getTransId()) {
+        const txnId = txn && txn.getTransId ? txn.getTransId() : null;
+        const txnResponseCode = txn && txn.getResponseCode ? txn.getResponseCode() : null;
+        if (txnId && txnId !== '0' && txnResponseCode === '1') {
           return res.json({
             success: true,
-            transactionId: txn.getTransId(),
+            transactionId: txnId,
             authCode: txn.getAuthCode ? txn.getAuthCode() : '',
             message: 'Payment approved',
           });
@@ -189,10 +192,12 @@ app.post('/charge-applepay', async (req, res) => {
         const response = new APIContracts.CreateTransactionResponse(apiResponse);
         const txn = response.getTransactionResponse ? response.getTransactionResponse() : null;
 
-        if (txn && txn.getTransId && txn.getTransId()) {
+        const transId = txn && txn.getTransId ? txn.getTransId() : null;
+        const responseCode = txn && txn.getResponseCode ? txn.getResponseCode() : null;
+        if (transId && transId !== '0' && responseCode === '1') {
           return res.json({
             success: true,
-            transactionId: txn.getTransId(),
+            transactionId: transId,
             authCode: txn.getAuthCode ? txn.getAuthCode() : '',
             message: 'Apple Pay payment approved',
           });
@@ -225,3 +230,4 @@ app.post('/charge-applepay', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Angeli's payment server running on port ${PORT}`);
 });
+
